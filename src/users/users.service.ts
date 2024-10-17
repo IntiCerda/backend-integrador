@@ -1,26 +1,78 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import admin from 'firebase-admin'; 
+import { User } from './entities/user.entity';
+import { DocumentSnapshot } from 'firebase-admin/firestore'; // Importa desde firebase-admin
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  private firestoreDb = admin.firestore(); 
+
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    try {
+      const docRef = await this.firestoreDb.collection('Users').add(createUserDto);
+      console.log('Data created with ID: ', docRef.id);
+      // Retorna el usuario creado con el ID
+      return {
+        ...createUserDto,
+        id: docRef.id, // Asegúrate de que también tienes un campo id en la clase User
+      } as User;
+    } catch (error) {
+      console.error('Error adding document: ', error);
+      throw new Error('Error creating user');
+    }
   }
 
-  findAll() {
-    return `Tu mami es maraca`;
+  async findAll() {
+    try {
+      const snapshot = await this.firestoreDb.collection('Users').get();
+      const users = snapshot.docs.map(doc => doc.data());
+      return users;
+    } catch (error) {
+      console.error('Error getting documents: ', error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string) {
+    try {
+      const doc = await this.firestoreDb.collection('Users').doc(id.toString()).get();
+      if (!doc.exists) {
+        throw new UnauthorizedException('No such document!');
+      } else {
+        return doc.data();
+      }
+    } catch (error) {
+      console.error('Error getting document: ', error);
+    }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  getUserById(id: string): Promise<User | null> {
+    return this.firestoreDb.collection('Users').doc(id).get().then((snapshot: DocumentSnapshot) => {
+      if (snapshot.exists) {
+        const data = snapshot.data() as Omit<User, 'id'>; // Usamos Omit para no incluir el ID en la validación
+        return {
+          ...data,
+          id: snapshot.id, // Agrega el ID del documento
+        } as User;
+      } else {
+        return null; // Retorna null si el documento no existe
+      }
+    });
+  }
+
+  deleteUserById(id: string): Promise<User | null> {
+    return this.firestoreDb.collection('Users').doc(id).get().then((snapshot: DocumentSnapshot) => {
+      if (snapshot.exists) {
+        const userData = snapshot.data() as User; // Asegúrate de que los datos coincidan con la estructura de User
+        return this.firestoreDb.collection('Users').doc(id).delete().then(() => userData);
+      } else {
+        return null; // Retorna null si el documento no existe
+      }
+    });
   }
 }

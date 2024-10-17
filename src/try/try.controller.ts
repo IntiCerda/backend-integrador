@@ -9,4 +9,7 @@ export class TryController {
     async createData(@Body() data: any): Promise<void> {
         await this.tryService.createData(data);
     }
+
+    
+
 }

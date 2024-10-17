@@ -7,7 +7,7 @@ export class TryService {
 
     async createData(data: any): Promise<void> {
         try {
-            const docRef = await this.firestoreDb.collection('alumnos').add(data); //collection es la primera colección que se crea
+            const docRef = await this.firestoreDb.collection('Alumnos').add(data); //collection es la primera colección que se crea
             console.log('Data created with ID: ', docRef.id);
             
         } catch (error) {
