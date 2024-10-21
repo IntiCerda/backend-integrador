@@ -62,7 +62,7 @@ export class ApoderadosService {
     }
   }
 
-  update(id: number, updateApoderadoDto: UpdateApoderadoDto) {
+  update(id: number, updateApoderadoDto: UpdateApoderadoDto) {  //Ver que se puede updatear
     return `This action updates a #${id} apoderado`;
   }
 
