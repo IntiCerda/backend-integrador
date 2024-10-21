@@ -64,7 +64,7 @@ export class UsersService {
   getUserById(id: string): Promise<User | null> {
     return this.firestoreDb.collection('Users').doc(id).get().then((snapshot: DocumentSnapshot) => {
       if (snapshot.exists) {
-        const data = snapshot.data() as Omit<User, 'id'>; 
+        const data = snapshot.data(); 
         return {
           ...data,
           id: snapshot.id, 
