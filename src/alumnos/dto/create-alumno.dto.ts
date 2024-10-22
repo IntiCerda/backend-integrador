@@ -13,7 +13,7 @@ export class CreateAlumnoDto {
 
     @IsString()
     @MinLength(6)
-    course : string;
+    curso : string;
 
 
 }

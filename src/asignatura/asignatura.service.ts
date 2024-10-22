@@ -1,26 +1,85 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateAsignaturaDto } from './dto/create-asignatura.dto';
 import { UpdateAsignaturaDto } from './dto/update-asignatura.dto';
+import admin from 'firebase-admin'; 
+import { Asignatura } from './entities/asignatura.entity';
+
 
 @Injectable()
 export class AsignaturaService {
-  create(createAsignaturaDto: CreateAsignaturaDto) {
-    return 'This action adds a new asignatura';
+  private firestoreDb = admin.firestore();
+
+  async create(createAsignaturaDto: CreateAsignaturaDto) {
+    try{
+      const docRef = await this.firestoreDb.collection('Asignaturas').add(createAsignaturaDto); 
+      return {
+        ...createAsignaturaDto,
+        id: docRef.id,
+      } as Asignatura;
+
+    }catch(error){
+      throw new Error('Error creating asignatura: ' + error.message);
+    }
   }
 
-  findAll() {
-    return `This action returns all asignatura`;
+  async findAll() {
+    try{
+      const snapshot = await this.firestoreDb.collection('Asignaturas').get();
+      const asignaturas = snapshot.docs.map(doc => {
+        const data = doc.data();
+
+        return {
+          ...data,
+          id: doc.id,
+        } as Asignatura;
+
+      });
+      return asignaturas;
+
+    }catch(error){
+      throw new Error('Error retrieving asignaturas');
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} asignatura`;
+  async getAsignaturaById(id: string): Promise<Asignatura | null> {
+    try{
+      const doc = await this.firestoreDb.collection('Asignaturas').doc(id).get();
+      if(!doc.exists){
+        throw new UnauthorizedException('No such document!');
+
+      }else{
+        const data = doc.data();
+        return{
+          ...data,
+          id: doc.id,
+        }as Asignatura;
+      }
+    }catch(error){
+      throw new Error('Error getting document');
+    }
+
+
   }
 
-  update(id: number, updateAsignaturaDto: UpdateAsignaturaDto) {
+  update(id: number, updateAsignaturaDto: UpdateAsignaturaDto) { // ver que updatear
     return `This action updates a #${id} asignatura`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} asignatura`;
+  async removeAsignaturaById(id: string): Promise<Asignatura | null> {
+    try{
+      const doc = await this.firestoreDb.collection('Asignaturas').doc(id).get();
+      if(!doc.exists){
+        throw new UnauthorizedException('No such document!');
+      }
+      const asignaturaData = doc.data() as Asignatura;
+      await this.firestoreDb.collection('Asignaturas').doc(id).delete();
+      
+      return{
+        ...asignaturaData,
+        id: doc.id,
+      } as Asignatura;
+    }catch(error){
+      throw new Error('Error deleting asignatura');
+    }
   }
 }

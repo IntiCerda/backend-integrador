@@ -1,26 +1,88 @@
 import { Injectable } from '@nestjs/common';
 import { CreateProfesoreDto } from './dto/create-profesore.dto';
 import { UpdateProfesoreDto } from './dto/update-profesore.dto';
+import admin from 'src/firebase.config';
+import { Profesore } from './entities/profesore.entity';
 
 @Injectable()
 export class ProfesoresService {
-  create(createProfesoreDto: CreateProfesoreDto) {
-    return 'This action adds a new profesore';
+  private firestoreDb = admin.firestore();
+  
+  async create(createProfesoreDto: CreateProfesoreDto) {
+    try{
+      const { id, ...data } = createProfesoreDto;
+      const docRef = this.firestoreDb.collection('Profesores').doc(id);
+      await docRef.set(data);
+      return {
+        ...data,
+        id: id,
+      }as Profesore;
+
+    }catch(error){
+      throw new Error('Error creating profesor: ' + error.message);
+    }
   }
 
-  findAll() {
-    return `This action returns all profesores`;
-  }
+  async findAll(): Promise <Profesore[]> {
+    try{
+      const snapshot = await this.firestoreDb.collection('Profesores').get();
+      const profesores = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+        } as Profesore;
+      });
+      return profesores;
 
-  findOne(id: number) {
-    return `This action returns a #${id} profesore`;
+    }catch(error){
+      throw new Error('Error retrieving profesores');
+    }
+  }
+  
+  async getProfesorById(id: string): Promise<Profesore | null> {
+    try{
+      const docRef = this.firestoreDb.collection('Profesores').doc(id);
+      const doc = await docRef.get();
+
+      if(!doc.exists){
+        console.log('No such document!');
+        return null;
+      }
+      return {
+        id: doc.id,
+        ...doc.data(),
+      } as Profesore;
+
+    }catch(error){
+      throw new Error('Error retrieving profesor: ' + error.message);
+    }
   }
 
   update(id: number, updateProfesoreDto: UpdateProfesoreDto) {
     return `This action updates a #${id} profesore`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} profesore`;
+  async eliminarProfesorById(id: string) {
+    try{
+      const docRef = this.firestoreDb.collection('Profesores').doc(id);
+      const doc = await docRef.get();
+
+      if(!doc.exists){
+        console.log('No such document!');
+        return null;
+      }
+
+      const profesorData = {
+        id: doc.id,
+        ...doc.data(),
+      } as Profesore
+      await docRef.delete();
+      return profesorData;
+
+    }catch(error){
+      throw new Error('Error eliminando profesor: ' + error.message);
+    }
+
   }
 }

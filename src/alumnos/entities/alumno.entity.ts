@@ -14,15 +14,15 @@ export class Alumno  {
 
     @IsString()
     @MinLength(6)
-    course : string;
+    curso : string;
 
     @IsString()
     @MinLength(6)
-    grades: string;
+    nivel: string;
 
     @IsString()
     @MinLength(6)
-    attendance: string;
+    asistencia: string;
 
 
 

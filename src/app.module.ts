@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
 import { TryModule } from './try/try.module';
 import { AlumnosModule } from './alumnos/alumnos.module';
 import { AsignaturaModule } from './asignatura/asignatura.module';
@@ -19,7 +18,7 @@ import { NotasModule } from './notas/notas.module';
 import './firebase.config'; 
 
 @Module({
-  imports: [UsersModule, AuthModule, TryModule, AlumnosModule, AsignaturaModule, ProfesoresModule, ApoderadosModule, CursosModule, PeriodoModule, AdminModule, NoticiasModule, ForoModule, ComentariosModule, AsistenciaModule, NotasModule], 
+  imports: [UsersModule, TryModule, AlumnosModule, AsignaturaModule, ProfesoresModule, ApoderadosModule, CursosModule, PeriodoModule, AdminModule, NoticiasModule, ForoModule, ComentariosModule, AsistenciaModule, NotasModule], 
   controllers: [AppController],
   providers: [AppService],
 })

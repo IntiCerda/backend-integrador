@@ -2,24 +2,25 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ProfesoresService } from './profesores.service';
 import { CreateProfesoreDto } from './dto/create-profesore.dto';
 import { UpdateProfesoreDto } from './dto/update-profesore.dto';
+import { Profesore } from './entities/profesore.entity';
 
 @Controller('profesores')
 export class ProfesoresController {
   constructor(private readonly profesoresService: ProfesoresService) {}
 
-  @Post()
-  create(@Body() createProfesoreDto: CreateProfesoreDto) {
+  @Post('createProfesor')
+  async create(@Body() createProfesoreDto: CreateProfesoreDto): Promise<Profesore> {
     return this.profesoresService.create(createProfesoreDto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise <Profesore[]> {
     return this.profesoresService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.profesoresService.findOne(+id);
+  getProfesorById(@Param('id') id: string) {
+    return this.profesoresService.getProfesorById(id);
   }
 
   @Patch(':id')
@@ -28,7 +29,7 @@ export class ProfesoresController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.profesoresService.remove(+id);
+  eliminarProfesorById(@Param('id') id: string) {
+    return this.profesoresService.eliminarProfesorById(id);
   }
 }

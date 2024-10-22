@@ -44,7 +44,7 @@ export class AlumnosService {
 
   async getAlumnoById(id: string): Promise<Alumno | null> {
     try {
-      const doc = await this.firestoreDb.collection('Alumnos').doc(id.toString()).get();
+      const doc = await this.firestoreDb.collection('Alumnos').doc(id).get();
       if (!doc.exists) {
         throw new UnauthorizedException('No such document!');
       } else {
@@ -59,7 +59,7 @@ export class AlumnosService {
     }
   }
 
-  update(id: number, updateAlumnoDto: UpdateAlumnoDto) {
+  update(id: number, updateAlumnoDto: UpdateAlumnoDto) { // ver que updatear
     return `This action updates a #${id} alumno`;
   }
 

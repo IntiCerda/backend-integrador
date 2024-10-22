@@ -12,7 +12,7 @@ export class ApoderadosService {
   async create(createApoderadoDto: CreateApoderadoDto): Promise<Apoderado> {
     try {
       const { id, ...data } = createApoderadoDto;
-  
+
       const docRef = this.firestoreDb.collection('Apoderados').doc(id);
       await docRef.set(data);
 
@@ -62,7 +62,7 @@ export class ApoderadosService {
     }
   }
 
-  update(id: number, updateApoderadoDto: UpdateApoderadoDto) {  //Ver que se puede updatear
+  update(id: number, updateApoderadoDto: UpdateApoderadoDto) { 
     return `This action updates a #${id} apoderado`;
   }
 
@@ -142,7 +142,7 @@ export class ApoderadosService {
 
       if (!apoderadoDoc.exists) {
         console.log('No such apoderado!');
-        return null; // Apoderado no encontrado
+        return null;
       }
 
       const apoderadoData = {
@@ -153,7 +153,6 @@ export class ApoderadosService {
       const alumnos: Alumno[] = [];
 
       if (apoderadoData.alumnos) {
-        // Buscar cada alumno por su ID
         for (const alumnoId of apoderadoData.alumnos) {
           const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumnoId);
           const alumnoDoc = await alumnoRef.get();
@@ -163,12 +162,12 @@ export class ApoderadosService {
               id: alumnoDoc.id,
               ...alumnoDoc.data(),
             } as Alumno;
-            alumnos.push(alumnoData); // Agregar el alumno al array
+            alumnos.push(alumnoData);
           }
         }
       }
 
-      return alumnos; // Retornar el array de alumnos
+      return alumnos; 
 
     } catch (error) {
       throw new Error('Error getting alumnos for apoderado: ' + error.message);

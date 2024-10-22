@@ -2,13 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { AsignaturaService } from './asignatura.service';
 import { CreateAsignaturaDto } from './dto/create-asignatura.dto';
 import { UpdateAsignaturaDto } from './dto/update-asignatura.dto';
+import { Asignatura } from './entities/asignatura.entity';
 
 @Controller('asignatura')
 export class AsignaturaController {
   constructor(private readonly asignaturaService: AsignaturaService) {}
 
-  @Post()
-  create(@Body() createAsignaturaDto: CreateAsignaturaDto) {
+  @Post('createAsignatura')
+  async create(@Body() createAsignaturaDto: CreateAsignaturaDto): Promise<Asignatura> {
     return this.asignaturaService.create(createAsignaturaDto);
   }
 
@@ -18,8 +19,8 @@ export class AsignaturaController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.asignaturaService.findOne(+id);
+  getAsignaturaById(@Param('id') id: string) {
+    return this.asignaturaService.getAsignaturaById(id);
   }
 
   @Patch(':id')
@@ -28,7 +29,7 @@ export class AsignaturaController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.asignaturaService.remove(+id);
+  removeAsignaturaById(@Param('id') id: string) {
+    return this.asignaturaService.removeAsignaturaById(id);
   }
 }
