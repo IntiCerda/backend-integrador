@@ -13,24 +13,34 @@ export class UsersService {
     try {
       const docRef = await this.firestoreDb.collection('Users').add(createUserDto);
       console.log('Data created with ID: ', docRef.id);
-      // Retorna el usuario creado con el ID
+      
       return {
         ...createUserDto,
-        id: docRef.id, // Asegúrate de que también tienes un campo id en la clase User
+        id: docRef.id, 
       } as User;
+
     } catch (error) {
+
       console.error('Error adding document: ', error);
       throw new Error('Error creating user');
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     try {
       const snapshot = await this.firestoreDb.collection('Users').get();
-      const users = snapshot.docs.map(doc => doc.data());
-      return users;
+      const users = snapshot.docs.map(doc => {
+        const data = doc.data() 
+        return {
+          ...data,
+          id: doc.id, 
+        } as User;
+      });
+      return users; 
+
     } catch (error) {
       console.error('Error getting documents: ', error);
+      throw new Error('Error retrieving users');
     }
   }
 
@@ -54,13 +64,13 @@ export class UsersService {
   getUserById(id: string): Promise<User | null> {
     return this.firestoreDb.collection('Users').doc(id).get().then((snapshot: DocumentSnapshot) => {
       if (snapshot.exists) {
-        const data = snapshot.data() as Omit<User, 'id'>; // Usamos Omit para no incluir el ID en la validación
+        const data = snapshot.data(); 
         return {
           ...data,
-          id: snapshot.id, // Agrega el ID del documento
+          id: snapshot.id, 
         } as User;
       } else {
-        return null; // Retorna null si el documento no existe
+        return null; 
       }
     });
   }
@@ -68,10 +78,10 @@ export class UsersService {
   deleteUserById(id: string): Promise<User | null> {
     return this.firestoreDb.collection('Users').doc(id).get().then((snapshot: DocumentSnapshot) => {
       if (snapshot.exists) {
-        const userData = snapshot.data() as User; // Asegúrate de que los datos coincidan con la estructura de User
+        const userData = snapshot.data() as User; 
         return this.firestoreDb.collection('Users').doc(id).delete().then(() => userData);
       } else {
-        return null; // Retorna null si el documento no existe
+        return null; 
       }
     });
   }
