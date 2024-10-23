@@ -32,4 +32,10 @@ export class AsignaturaController {
   removeAsignaturaById(@Param('id') id: string) {
     return this.asignaturaService.removeAsignaturaById(id);
   }
+
+  @Post('addProfesorToAsignatura')
+  async setAsignaturaToProfesor(@Body('asignaturaId') asignaturaId: string, @Body('profesorId') profesorId: string)
+  : Promise<Asignatura | null> {
+    return this.asignaturaService.setAsignaturaToProfesor(asignaturaId, profesorId);
+  }
 }

@@ -11,7 +11,7 @@ export class Asignatura {
     
      @IsString()
      @MinLength(1)
-     profesor: string;
+     profesorId?: string;
     
      @IsString()
      @MinLength(1)

@@ -82,4 +82,27 @@ export class AsignaturaService {
       throw new Error('Error deleting asignatura');
     }
   }
+
+  async setAsignaturaToProfesor(asignaturaId: string, profesorId: string): Promise<Asignatura | null> {
+    try{
+      const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(asignaturaId);
+      const profesorRef = this.firestoreDb.collection('Profesores').doc(profesorId);
+      const asignatura = await asignaturaRef.get();
+      const profesor = await profesorRef.get();
+
+      if(!asignatura.exists || !profesor.exists){
+        throw new UnauthorizedException('No such document!');
+      }
+
+      await asignaturaRef.update({profesorId: profesorId});
+      return{
+        ...asignatura.data(),
+        id: asignatura.id,
+      } as Asignatura;
+
+      }catch(error){
+      throw new Error('Error setting asignatura to profesor');
+    }
+  }
+
 }

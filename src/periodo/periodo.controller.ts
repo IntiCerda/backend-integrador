@@ -28,7 +28,7 @@ export class PeriodoController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.periodoService.remove(+id);
+  eliminarPeriodoById(@Param('id') id: string) {
+    return this.periodoService.eliminarPeriodoById(id);
   }
 }

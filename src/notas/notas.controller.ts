@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { NotasService } from './notas.service';
 import { CreateNotaDto } from './dto/create-nota.dto';
 import { UpdateNotaDto } from './dto/update-nota.dto';
+import { Nota } from './entities/nota.entity';
 
 @Controller('notas')
 export class NotasController {
@@ -13,13 +14,13 @@ export class NotasController {
   }
 
   @Get()
-  findAll() {
-    return this.notasService.findAll();
+  async getNotasTodosAlumnos(): Promise<{ alumnoId: string; nombre: string; notas: Nota[] }[]> {
+    return this.notasService.getNotasTodosAlumnos();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.notasService.findOne(+id);
+  getNotasDeUnAlumno(@Param('id') id: string): Promise<{ alumnoId: string; nombre: string; notas: Nota[] }> {
+    return this.notasService.getNotasDeUnAlumno(id);
   }
 
   @Patch(':id')
@@ -28,7 +29,7 @@ export class NotasController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.notasService.remove(+id);
+  eliminarNota(@Param('id') id: string): Promise<void> {
+    return this.notasService.eliminarNota(id);
   }
 }
