@@ -18,8 +18,8 @@ export class NoticiasController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.noticiasService.findOne(+id);
+  getNoticeById(@Param('id') id: string) {
+    return this.noticiasService.getNoticeById(id);
   }
 
   @Patch(':id')
@@ -28,7 +28,7 @@ export class NoticiasController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.noticiasService.remove(+id);
+  eliminarNoticeById(@Param('id') id: string) {
+    return this.noticiasService.eliminarNoticeById(id);
   }
 }

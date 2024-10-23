@@ -1,15 +1,40 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
+import admin from 'src/firebase.config';
+import { Curso } from './entities/curso.entity';
 
 @Injectable()
 export class CursosService {
-  create(createCursoDto: CreateCursoDto) {
-    return 'This action adds a new curso';
+  private firebaseDb = admin.firestore();
+
+  async create(createCursoDto: CreateCursoDto): Promise<Curso> {
+    try{
+      const docRef = this.firebaseDb.collection('Cursos').doc();
+      await docRef.set(createCursoDto);
+      return {
+        ...createCursoDto,
+        id: docRef.id,
+      } as Curso;
+    }catch(error){
+      throw new Error('Error creating curso: ' + error.message);
+    }
   }
 
-  findAll() {
-    return `This action returns all cursos`;
+  async findAll(): Promise<Curso[]> {
+    try{
+      const snapshot = await this.firebaseDb.collection('Cursos').get();
+      const cursos = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+        } as Curso;
+      });
+      return cursos;
+    }catch(error){
+      throw new Error('Error retrieving cursos');
+    }
   }
 
   findOne(id: number) {
@@ -20,7 +45,17 @@ export class CursosService {
     return `This action updates a #${id} curso`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} curso`;
+  async eliminarCurso(id: string) {
+    try{
+      const docRef = this.firebaseDb.collection('Cursos').doc(id);
+      const doc = await docRef.get();
+      if(!doc.exists){
+        throw new Error('No such document!');
+    }
+      docRef.delete();
+      return true;
+    }catch(error){
+      throw new Error('Error deleting curso: ' + error.message);
+    }
   }
 }

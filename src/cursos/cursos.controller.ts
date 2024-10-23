@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CursosService } from './cursos.service';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
+import { Curso } from './entities/curso.entity';
 
 @Controller('cursos')
 export class CursosController {
@@ -13,12 +14,12 @@ export class CursosController {
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<Curso[]> {
     return this.cursosService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string) { //Necesitamos esto? IDK
     return this.cursosService.findOne(+id);
   }
 
@@ -28,7 +29,7 @@ export class CursosController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cursosService.remove(+id);
+  eliminarCurso(@Param('id') id: string) {
+    return this.cursosService.eliminarCurso(id);
   }
 }

@@ -23,12 +23,18 @@ export class ComentariosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateComentarioDto: UpdateComentarioDto) {
-    return this.comentariosService.update(+id, updateComentarioDto);
+  modificarComentario(@Param('id') id: string, @Body() updateComentarioDto: UpdateComentarioDto) {
+    return this.comentariosService.modificarComentario(id, updateComentarioDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.comentariosService.remove(+id);
+  eleminarComentarioById(@Param('id') id: string) {
+    return this.comentariosService.eleminarComentarioById(id);
   }
+
+  @Get('comentariosForo/:idForo')
+  todosComentariosDeUnForo(@Param('idForo') idForo: string) {
+    return this.comentariosService.todosComentariosDeUnForo(idForo);
+  }
+
 }

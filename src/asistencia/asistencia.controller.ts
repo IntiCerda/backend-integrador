@@ -8,7 +8,7 @@ export class AsistenciaController {
   constructor(private readonly asistenciaService: AsistenciaService) {}
 
   @Post()
-  create(@Body() createAsistenciaDto: CreateAsistenciaDto) {
+  async create(@Body() createAsistenciaDto: CreateAsistenciaDto) {
     return this.asistenciaService.create(createAsistenciaDto);
   }
 

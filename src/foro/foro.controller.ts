@@ -8,27 +8,27 @@ export class ForoController {
   constructor(private readonly foroService: ForoService) {}
 
   @Post()
-  create(@Body() createForoDto: CreateForoDto) {
+  async create(@Body() createForoDto: CreateForoDto) {
     return this.foroService.create(createForoDto);
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.foroService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.foroService.findOne(+id);
+  async getForoById(@Param('id') id: string) {
+    return this.foroService.getForoById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateForoDto: UpdateForoDto) {
+  async update(@Param('id') id: string, @Body() updateForoDto: UpdateForoDto) {
     return this.foroService.update(+id, updateForoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.foroService.remove(+id);
+  async removeForo(@Param('id') id: string) {
+    return this.foroService.removeForo(id);
   }
 }
