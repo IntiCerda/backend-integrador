@@ -9,15 +9,30 @@ import { Asignatura } from './entities/asignatura.entity';
 export class AsignaturaService {
   private firestoreDb = admin.firestore();
 
-  async create(createAsignaturaDto: CreateAsignaturaDto) {
-    try{
-      const docRef = await this.firestoreDb.collection('Asignaturas').add(createAsignaturaDto); 
-      return {
+  async create(createAsignaturaDto: CreateAsignaturaDto) { 
+    try {
+      const { nombre, profesorId } = createAsignaturaDto;
+  
+      const profesorExiste = await this.firestoreDb.collection('Profesores').doc(profesorId).get();
+      if (!profesorExiste.exists) {
+        throw new UnauthorizedException('No such document!');
+      }
+  
+      const asignaturaData = {
         ...createAsignaturaDto,
+        profesorNombre: profesorExiste.data()?.nombre,
+      };
+  
+      const docRef = await this.firestoreDb.collection('Asignaturas').add(asignaturaData); 
+  
+      return {
+        nombre: nombre,
+        profesorId: profesorId,
+        profesorNombre: profesorExiste.data()?.nombre,
         id: docRef.id,
       } as Asignatura;
-
-    }catch(error){
+  
+    } catch (error) {
       throw new Error('Error creating asignatura: ' + error.message);
     }
   }

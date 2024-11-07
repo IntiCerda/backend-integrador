@@ -8,6 +8,6 @@ export class CreateAsignaturaDto {
    
     @IsString()
     @MinLength(1)
-    profesor: string;
+    profesorId: string;
 
 }
