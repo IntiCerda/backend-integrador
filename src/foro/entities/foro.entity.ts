@@ -14,11 +14,11 @@ export class Foro {
 
     @IsString()
     @MinLength(1)
-    profesorId: string;
+    profesor: string;
 
     @IsString()
     @MinLength(1)
-    cursoId: string;
+    curso: string;
 
     @IsString()
     @MinLength(1)

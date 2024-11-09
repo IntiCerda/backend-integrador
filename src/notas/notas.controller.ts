@@ -8,8 +8,8 @@ import { Nota } from './entities/nota.entity';
 export class NotasController {
   constructor(private readonly notasService: NotasService) {}
 
-  @Post()
-  create(@Body() createNotaDto: CreateNotaDto) {
+  @Post('a')
+  async create(@Body() createNotaDto: CreateNotaDto) {
     return this.notasService.create(createNotaDto);
   }
 

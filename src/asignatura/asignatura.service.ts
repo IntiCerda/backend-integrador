@@ -11,24 +11,14 @@ export class AsignaturaService {
 
   async create(createAsignaturaDto: CreateAsignaturaDto) { 
     try {
-      const { nombre, profesorId } = createAsignaturaDto;
+      const { id, nombre } = createAsignaturaDto;
   
-      const profesorExiste = await this.firestoreDb.collection('Profesores').doc(profesorId).get();
-      if (!profesorExiste.exists) {
-        throw new UnauthorizedException('No such document!');
-      }
-  
-      const asignaturaData = {
-        ...createAsignaturaDto,
-        profesorNombre: profesorExiste.data()?.nombre,
-      };
-  
-      const docRef = await this.firestoreDb.collection('Asignaturas').add(asignaturaData); 
+      const docRef = this.firestoreDb.collection('Asignaturas').doc(id);
+      await docRef.set(createAsignaturaDto);
+
   
       return {
         nombre: nombre,
-        profesorId: profesorId,
-        profesorNombre: profesorExiste.data()?.nombre,
         id: docRef.id,
       } as Asignatura;
   
@@ -98,6 +88,7 @@ export class AsignaturaService {
     }
   }
 
+  //Esto ya no es asi...
   async setAsignaturaToProfesor(asignaturaId: string, profesorId: string): Promise<Asignatura | null> {
     try{
       const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(asignaturaId);

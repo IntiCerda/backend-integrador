@@ -11,11 +11,35 @@ export class ForoService {
 
   async create(createForoDto: CreateForoDto):Promise<Foro> {
     try {
+      const {title, description, profesorId, cursoId, fecha } = createForoDto;
+
+      const profesorExiste = await this.firestoreDb.collection('Profesores').doc(profesorId).get();
+      if(!profesorExiste.exists){
+        throw new Error('Profesor does not exist');
+      }
+
+      const cursoExiste = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
+      if(!cursoExiste.exists){
+        throw new Error('Curso does not exist');
+      }
+
+      const data = {
+        title : title,
+        description : description,
+        profesor : profesorExiste.data().nombre,
+        curso : cursoExiste.data().nombre,
+        fecha : fecha
+      } 
+
       const docRef = this.firestoreDb.collection('Foro').doc();
-      await docRef.set(createForoDto);
+      await docRef.set(data);
       
       return{
-        ...createForoDto,
+        title : title,
+        description : description,
+        profesor : profesorExiste.data().nombre,
+        curso : cursoExiste.data().nombre,
+        fecha : fecha,
         id: docRef.id,
       }as Foro;
 

@@ -12,6 +12,11 @@ export class CreateNotaDto {
     @MinLength(1)
     profesorId: string;
 
+    @IsString()
+    cursoId: string;
+
+    @IsString()
+    asignaturaId: string;
 
     @IsString()
     @MinLength(1)

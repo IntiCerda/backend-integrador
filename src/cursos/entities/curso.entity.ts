@@ -5,6 +5,10 @@ export class Curso {
 
     @IsString()
     @MinLength(1)
+    nombre: string;
+
+    @IsString()
+    @MinLength(1)
     asignaturaId: string;
 
     @IsString()
