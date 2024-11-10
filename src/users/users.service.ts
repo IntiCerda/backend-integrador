@@ -11,8 +11,9 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     try {
-      const docRef = await this.firestoreDb.collection('Users').add(createUserDto);
-      console.log('Data created with ID: ', docRef.id);
+      const { uid, ...data } = createUserDto;
+      const docRef = this.firestoreDb.collection('user').doc(uid);
+      await docRef.set(data);
       
       return {
         ...createUserDto,
@@ -33,7 +34,7 @@ export class UsersService {
         const data = doc.data() 
         return {
           ...data,
-          id: doc.id, 
+          uid: doc.id, 
         } as User;
       });
       return users; 
@@ -67,7 +68,7 @@ export class UsersService {
         const data = snapshot.data(); 
         return {
           ...data,
-          id: snapshot.id, 
+          uid: snapshot.id, 
         } as User;
       } else {
         return null; 

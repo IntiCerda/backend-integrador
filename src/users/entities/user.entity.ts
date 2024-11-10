@@ -1,21 +1,19 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export class User {
-    id: string;
-
     @IsString()
     @MinLength(1)
-    name: string;
+    nombre: string;
   
     @IsString()
     @MinLength(6)
-    lastName: string;
+    apellido: string;
   
     @IsEmail()
-    email: string;
+    rol: string;
   
     @IsString()
     @MinLength(6)
-    password: string;
+    uid: string;
 
 }
