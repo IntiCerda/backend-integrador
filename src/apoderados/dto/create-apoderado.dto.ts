@@ -7,13 +7,11 @@ export class CreateApoderadoDto {
 
     @IsString()
     @MinLength(1)
-    fullName: string;
+    nombre: string;
 
-    @IsEmail()
-    email: string;
-  
     @IsString()
-    @MinLength(6)
-    password: string;
+    @MinLength(1)
+    apellido: string;
 
+    
 }
