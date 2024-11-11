@@ -6,11 +6,23 @@ export class Alumno  {
 
     @IsString()
     @MinLength(1)
-    name: string;
+    nombre: string;
   
     @IsString()
     @MinLength(6)
-    lastName: string;
+    apellido: string;
+
+    @IsString()
+    @MinLength(1)
+    rut: string;
+
+    @IsString()
+    @MinLength(1)
+    fechaNacimiento: string;
+
+    @IsString()
+    @MinLength(1)
+    apoderadoId: string;
 
     @IsString()
     @MinLength(6)
@@ -18,11 +30,11 @@ export class Alumno  {
 
     @IsString()
     @MinLength(6)
-    nivel: string;
+    nivel?: string;
 
     @IsString()
     @MinLength(6)
-    asistencia: string;
+    asistencia?: string;
 
 
 

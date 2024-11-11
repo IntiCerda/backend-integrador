@@ -1,4 +1,5 @@
 import { IsEmail, IsString, MinLength } from 'class-validator';
+import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 export class Apoderado {
 
@@ -15,7 +16,7 @@ export class Apoderado {
 
 
 
-    alumnos?: string[];
+    alumnos?: Alumno[];
 
     constructor() {
         this.alumnos = []; 

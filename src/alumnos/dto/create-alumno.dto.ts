@@ -5,11 +5,23 @@ export class CreateAlumnoDto {
 
     @IsString()
     @MinLength(1)
-    name: string;
+    nombre: string;
   
     @IsString()
     @MinLength(6)
-    lastName: string;
+    apellido: string;
+
+    @IsString()
+    @MinLength(1)
+    rut: string;
+
+    @IsString()
+    @MinLength(1)
+    fechaNacimiento: string;
+
+    @IsString()
+    @MinLength(1)
+    apoderadoId: string;
 
     @IsString()
     @MinLength(6)

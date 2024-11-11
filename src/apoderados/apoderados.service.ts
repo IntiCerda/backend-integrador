@@ -27,19 +27,39 @@ export class ApoderadosService {
   }
 
   async findAll(): Promise<Apoderado[]> {
-    try{
+    try {
       const snapshot = await this.firestoreDb.collection('Apoderados').get();
-      const apoderados = snapshot.docs.map(doc => {
+      const apoderados = await Promise.all(snapshot.docs.map(async doc => {
         const data = doc.data();
+        const alumnosIds = Array.isArray(data.alumnos) ? data.alumnos : [];
+  
+        const alumnosDetails = await Promise.all(alumnosIds.map(async alumnoId => {
+          const alumnoDoc = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
+          if (alumnoDoc.exists) {
+            const alumnoData = alumnoDoc.data();
+            return {
+              id: alumnoId,
+              nombre: alumnoData?.nombre,
+              apellido: alumnoData?.apellido,
+            };
+          }
+          return null; 
+        }));
+  
+        const validAlumnos = alumnosDetails.filter(alumno => alumno !== null);
+  
         return {
-          ...data,
+          nombre: data.nombre,
+          apellido: data.apellido,
+          alumnos: validAlumnos, 
           id: doc.id,
         } as Apoderado;
-      });
+      }));
+  
       return apoderados;
-      }catch(error){
-        throw new Error('Error retrieving apoderados');
-      }
+    } catch (error) {
+      throw new Error('Error retrieving apoderados: ' + error.message);
+    }
   }
 
   async getApoderadoById(id: string): Promise<Apoderado | null> {
@@ -93,42 +113,47 @@ export class ApoderadosService {
     try {
       const apoderadoRef = this.firestoreDb.collection('Apoderados').doc(apoderadoId);
       const apoderadoDoc = await apoderadoRef.get();
-
+  
       if (!apoderadoDoc.exists) {
         console.log('No such apoderado!');
         return null;
       }
-
+  
       const apoderadoData = {
         id: apoderadoDoc.id,
         ...apoderadoDoc.data(),
       } as Apoderado;
-
+  
       const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumnoId);
       const alumnoDoc = await alumnoRef.get();
-
+      
       if (!alumnoDoc.exists) {
         console.log('No such alumno!');
         return null;
       }
-
-      if (!apoderadoData.alumnos) {
+  
+      if (!Array.isArray(apoderadoData.alumnos)) {
         apoderadoData.alumnos = []; 
       }
 
-      if (!apoderadoData.alumnos.includes(alumnoId)) {
-        apoderadoData.alumnos.push(alumnoId); 
+      const nuevoAlumno = {
+        id: alumnoId,
+        nombre: alumnoDoc.data()?.nombre,
+        apellido: alumnoDoc.data()?.apellido,
+      } as Alumno;
+
+      if (!apoderadoData.alumnos.some(a => a.id === alumnoId)) {
+        apoderadoData.alumnos.push(nuevoAlumno);
+        await apoderadoRef.update({ alumnos: apoderadoData.alumnos }); 
+      } else {
+        console.log('Alumno is already associated with this apoderado.');
       }
-
-      await apoderadoRef.update({ alumnos: apoderadoData.alumnos });
-
-      console.log('Alumno added to apoderado:', apoderadoId);
-
+  
       return {
         ...apoderadoData,
         alumnos: apoderadoData.alumnos, 
       };
-
+  
     } catch (error) {
       throw new Error('Error adding alumno to apoderado: ' + error.message);
     }
@@ -153,8 +178,8 @@ export class ApoderadosService {
       const alumnos: Alumno[] = [];
 
       if (apoderadoData.alumnos) {
-        for (const alumnoId of apoderadoData.alumnos) {
-          const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumnoId);
+        for (const alumno of apoderadoData.alumnos) {
+          const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumno.id);
           const alumnoDoc = await alumnoRef.get();
 
           if (alumnoDoc.exists) {
@@ -173,5 +198,7 @@ export class ApoderadosService {
       throw new Error('Error getting alumnos for apoderado: ' + error.message);
     }
   }
+
+  
 
 }

@@ -7,7 +7,9 @@ import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 @Controller('apoderados')
 export class ApoderadosController {
-  constructor(private readonly apoderadosService: ApoderadosService) {}
+
+  constructor(
+    private readonly apoderadosService: ApoderadosService) {}
 
   @Post('createApoderado')
   async create(@Body() createApoderadoDto: CreateApoderadoDto): Promise<Apoderado> {

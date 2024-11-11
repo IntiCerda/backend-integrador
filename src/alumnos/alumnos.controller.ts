@@ -6,7 +6,8 @@ import { Alumno } from './entities/alumno.entity';
 
 @Controller('alumnos')
 export class AlumnosController {
-  constructor(private readonly alumnosService: AlumnosService) {}
+  constructor(
+    private readonly alumnosService: AlumnosService) {}
 
   @Post('createAlumno')
   async create(@Body() createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
@@ -14,7 +15,7 @@ export class AlumnosController {
   }
 
   @Get()
-  findAll(): Promise<Alumno[]> {
+  findAll(): Promise<{ id: string; nombre: string; apoderadoNombre: string | null }[]> {
     return this.alumnosService.findAll();
   }
 
@@ -32,4 +33,17 @@ export class AlumnosController {
   deleteAlumnoById(@Param('id') id: string) {
     return this.alumnosService.deleteAlumnoById(id);
   }
+
+  @Post('associate')
+  async associateAlumnosWithApoderados(): Promise<string> {
+    try {
+      await this.alumnosService.associateAlumnosWithApoderados();
+      return 'Alumnos asociados con apoderados correctamente.';
+    } catch (error) {
+      // Manejo de errores en caso de que ocurra algún problema
+      console.error(error);
+      throw new Error('Error al asociar alumnos con apoderados.');
+    }
+  }
+
 }
