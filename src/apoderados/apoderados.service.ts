@@ -34,16 +34,24 @@ export class ApoderadosService {
         const alumnosIds = Array.isArray(data.alumnos) ? data.alumnos : [];
   
         const alumnosDetails = await Promise.all(alumnosIds.map(async alumnoId => {
-          const alumnoDoc = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
-          if (alumnoDoc.exists) {
-            const alumnoData = alumnoDoc.data();
-            return {
-              id: alumnoId,
-              nombre: alumnoData?.nombre,
-              apellido: alumnoData?.apellido,
-            };
+          if (!alumnoId || typeof alumnoId !== 'string') {
+            return null; 
           }
-          return null; 
+  
+          try {
+            const alumnoDoc = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
+            if (alumnoDoc.exists) {
+              const alumnoData = alumnoDoc.data();
+              return {
+                id: alumnoId,
+                nombre: alumnoData?.nombre,
+                apellido: alumnoData?.apellido,
+              };
+            }
+            return null; 
+          } catch (err) {
+            return null; 
+          }
         }));
   
         const validAlumnos = alumnosDetails.filter(alumno => alumno !== null);
@@ -57,6 +65,7 @@ export class ApoderadosService {
       }));
   
       return apoderados;
+  
     } catch (error) {
       throw new Error('Error retrieving apoderados: ' + error.message);
     }

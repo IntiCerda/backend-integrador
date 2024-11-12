@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsString, MinLength } from 'class-validator';
 import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 export class Apoderado {

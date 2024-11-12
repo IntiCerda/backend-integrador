@@ -22,7 +22,7 @@ export class AlumnosService {
 
       const docRef = await this.firestoreDb.collection('Alumnos').add(createAlumnoDto);
       await this.apoderadosService.addAlumnoToApoderado(createAlumnoDto.apoderadoId, docRef.id);
-
+      this.associateAlumnosWithApoderados();
       return {
         ...createAlumnoDto,
         id: docRef.id,
@@ -61,7 +61,6 @@ export class AlumnosService {
         } as { id: string; nombre: string; apoderadoNombre: string | null };
       });
   
-      // Esperar a que todas las promesas se resuelvan
       const alumnos = await Promise.all(alumnosPromises);
   
       return alumnos;
