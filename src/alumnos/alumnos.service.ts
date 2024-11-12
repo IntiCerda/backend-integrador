@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAlumnoDto } from './dto/create-alumno.dto';
 import { UpdateAlumnoDto } from './dto/update-alumno.dto';
 import admin from 'firebase-admin'; 
@@ -87,8 +87,25 @@ export class AlumnosService {
     }
   }
 
-  update(id: number, updateAlumnoDto: UpdateAlumnoDto) { // ver que updatear
-    return `This action updates a #${id} alumno`;
+  async update(id: string, updateAlumnoDto: UpdateAlumnoDto): Promise<Alumno> {
+    const alumno = await this.getAlumnoById(id);
+  
+    if (!alumno) {
+      throw new NotFoundException(`Alumno con ID ${id} no encontrado`);
+    }
+  
+    const updateData: { [key: string]: any } = {};
+  
+    Object.keys(updateAlumnoDto).forEach(key => {
+      const value = updateAlumnoDto[key];
+      if (value !== undefined) {
+        updateData[key] = value;
+      }
+    });
+  
+    await this.firestoreDb.collection('Alumnos').doc(id).update(updateData);
+  
+    return { ...alumno, ...updateData }; 
   }
 
   async deleteAlumnoById(id: string): Promise<Alumno | null> {

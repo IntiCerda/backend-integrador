@@ -25,8 +25,8 @@ export class AlumnosController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlumnoDto: UpdateAlumnoDto) {
-    return this.alumnosService.update(+id, updateAlumnoDto);
+  async update(@Param('id') id: string, @Body() updateAlumnoDto: UpdateAlumnoDto) {
+    return await this.alumnosService.update(id, updateAlumnoDto);
   }
 
   @Delete(':id')

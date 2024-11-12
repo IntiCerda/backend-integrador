@@ -14,8 +14,6 @@ export class Apoderado {
     @MinLength(1)
     apellido: string;
 
-
-
     alumnos?: Alumno[];
 
     constructor() {
