@@ -98,10 +98,14 @@ export class AlumnosService {
   
     Object.keys(updateAlumnoDto).forEach(key => {
       const value = updateAlumnoDto[key];
-      if (value !== undefined) {
+      if (value !== undefined && value !== "") {
         updateData[key] = value;
       }
     });
+  
+    if (Object.keys(updateData).length === 0) {
+      throw new Error("No hay datos para actualizar.");
+    }
   
     await this.firestoreDb.collection('Alumnos').doc(id).update(updateData);
   
