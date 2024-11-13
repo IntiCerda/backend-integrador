@@ -19,8 +19,8 @@ export class CursosController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) { //Necesitamos esto? IDK
-    return this.cursosService.findOne(+id);
+  async getCursoById(@Param('id') id: string) { //Necesitamos esto? IDK
+    return this.cursosService.getCursoById(id);
   }
 
   @Patch(':id')

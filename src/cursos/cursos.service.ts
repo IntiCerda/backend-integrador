@@ -37,8 +37,21 @@ export class CursosService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} curso`;
+  async getCursoById(id: string): Promise<Curso | null> {
+    try{
+      const doc = await this.firebaseDb.collection('Cursos').doc(id).get();
+      if(!doc.exists){
+        throw new Error('No such document!');
+      }
+      const data = doc.data();
+      return {
+        ...data,
+        id: doc.id,
+      } as Curso;
+    }catch(error){
+      throw new Error('Error retrieving curso: ' + error.message);
+    }
+
   }
 
   update(id: number, updateCursoDto: UpdateCursoDto) {

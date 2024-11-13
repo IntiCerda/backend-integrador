@@ -14,7 +14,7 @@ export class AsignaturaController {
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.asignaturaService.findAll();
   }
 

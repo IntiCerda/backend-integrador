@@ -21,7 +21,7 @@ export class AlumnosService {
       }
 
       const docRef = await this.firestoreDb.collection('Alumnos').add(createAlumnoDto);
-      await this.apoderadosService.addAlumnoToApoderado(createAlumnoDto.apoderadoId, docRef.id);
+      this.apoderadosService.addAlumnoToApoderado(createAlumnoDto.apoderadoId, docRef.id);
       this.associateAlumnosWithApoderados();
       return {
         ...createAlumnoDto,
@@ -120,7 +120,7 @@ export class AlumnosService {
       }
       const alumnoData = doc.data() as Alumno;
       await this.firestoreDb.collection('Alumnos').doc(id).delete();
-  
+      this.associateAlumnosWithApoderados();
       return {
         ...alumnoData,
         id: doc.id, 
