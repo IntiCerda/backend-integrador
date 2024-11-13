@@ -3,11 +3,14 @@ import {IsString, MinLength } from 'class-validator';
 export class CreateAsignaturaDto {
 
     @IsString()
-    id: string;
-
-    @IsString()
     @MinLength(1)
     nombre: string;
    
+    @IsString()
+    @MinLength(1)
+    profesorId: string;
 
+    @IsString()
+    @MinLength(1)
+    cursoId: string;
 }

@@ -12,14 +12,6 @@ export class Profesore {
     @MinLength(1)
     apellido: string;
 
-    @IsString()
-    @IsEmail()
-    email: string;
-
-    @IsString()
-    @MinLength(6)
-    password: string;
-
 
 
 }

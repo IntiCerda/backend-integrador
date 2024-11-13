@@ -3,25 +3,44 @@ import { CreateAsignaturaDto } from './dto/create-asignatura.dto';
 import { UpdateAsignaturaDto } from './dto/update-asignatura.dto';
 import admin from 'firebase-admin'; 
 import { Asignatura } from './entities/asignatura.entity';
+import { CursosService } from 'src/cursos/cursos.service';
+import { ProfesoresService } from 'src/profesores/profesores.service';
 
 
 @Injectable()
 export class AsignaturaService {
   private firestoreDb = admin.firestore();
+  constructor(private readonly profesorService: ProfesoresService,
+    private readonly cursoService: CursosService,
+  ) {}
 
   async create(createAsignaturaDto: CreateAsignaturaDto) { 
     try {
-      const { id, nombre } = createAsignaturaDto;
-  
-      const docRef = this.firestoreDb.collection('Asignaturas').doc(id);
-      await docRef.set(createAsignaturaDto);
+      const {nombre,profesorId, cursoId } = createAsignaturaDto;
+      const profesorE = await this.profesorService.getProfesorById(profesorId);
 
-  
-      return {
+      if(!profesorE){
+        throw new UnauthorizedException('No such document!'); 
+      }
+      const cursoE = await this.cursoService.getCursoById(cursoId);
+      if(!cursoE){
+        throw new UnauthorizedException('No such document!'); 
+      } 
+      const docRef = await this.firestoreDb.collection('Asignaturas').add(createAsignaturaDto);
+      
+      const data = {
         nombre: nombre,
+        profesor:profesorE,
+        curso: cursoE,
         id: docRef.id,
+       }
+
+       await docRef.set(data);
+       
+       return {
+        ...data
       } as Asignatura;
-  
+      
     } catch (error) {
       throw new Error('Error creating asignatura: ' + error.message);
     }
