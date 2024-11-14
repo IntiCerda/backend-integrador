@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateApoderadoDto } from './dto/create-apoderado.dto';
 import { UpdateApoderadoDto } from './dto/update-apoderado.dto';
 import admin from 'firebase-admin'; 
@@ -91,8 +91,22 @@ export class ApoderadosService {
     }
   }
 
-  update(id: number, updateApoderadoDto: UpdateApoderadoDto) { 
-    return `This action updates a #${id} apoderado`;
+  async update(id: string, updateApoderadoDto: UpdateApoderadoDto) { 
+    const apoderado =  await this.getApoderadoById(id);
+    if (!apoderado) {
+      throw new NotFoundException(`Alumno con ID ${id} no encontrado`);
+    }
+    const updateData: { [key: string]: any } = {};
+    Object.keys(updateApoderadoDto).forEach(key => {
+      const value = updateApoderadoDto[key];
+      if (value !== undefined) {
+        updateData[key] = value;
+      }
+    });
+    if (Object.keys(updateData).length === 0) {
+      throw new Error('No data to update');
+    }
+    await this.firestoreDb.collection('Apoderados').doc(id).update(updateData);
   }
 
   async eliminarApoderadoById(id: string): Promise<Apoderado | null> {
@@ -104,6 +118,18 @@ export class ApoderadosService {
         console.log('No such document!');
         return null; 
       }
+
+      const alumnos = await this.getAlumnosToApoderado(id);
+      if(!alumnos) {
+        await docRef.delete();
+        return null;
+      }else{
+        for (const alumno of alumnos) {
+          const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumno.id);
+          await alumnoRef.delete();
+        }
+      }
+      
       const apoderadoData = {
         id: doc.id,
         ...doc.data(), 
@@ -167,7 +193,6 @@ export class ApoderadosService {
       throw new Error('Error adding alumno to apoderado: ' + error.message);
     }
   }
-
 
   async getAlumnosToApoderado(apoderadoId: string): Promise<Alumno[] | null> {
     try {
