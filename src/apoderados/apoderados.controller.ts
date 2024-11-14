@@ -42,7 +42,7 @@ export class ApoderadosController {
     return this.apoderadosService.addAlumnoToApoderado(apoderadoId, alumnoId);
   }
 
-  @Get(':id/alumnos')
+  @Get('alumnos/:id')
   async getAlumnosToApoderado(@Param('id') apoderadoId: string): Promise<Alumno[] | null> {
     return this.apoderadosService.getAlumnosToApoderado(apoderadoId);
   }
