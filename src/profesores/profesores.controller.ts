@@ -25,7 +25,7 @@ export class ProfesoresController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProfesoreDto: UpdateProfesoreDto) {
-    return this.profesoresService.update(+id, updateProfesoreDto);
+    return this.profesoresService.update(id, updateProfesoreDto);
   }
 
   @Delete(':id')

@@ -59,8 +59,22 @@ export class ProfesoresService {
     }
   }
 
-  update(id: number, updateProfesoreDto: UpdateProfesoreDto) {
-    return `This action updates a #${id} profesore`;
+  async update(id: string, updateProfesoreDto: UpdateProfesoreDto) {
+    const profesor = await this.getProfesorById(id);
+    if(!profesor){
+      throw new Error('Profesor not found');
+    }
+    const updateData: {[key: string]: any} = {};
+    Object.keys(updateProfesoreDto).forEach(key => {
+      const value = updateProfesoreDto[key];
+      if(value !== undefined && value !== ""){
+        updateData[key] = value;
+      }
+    });
+    if(Object.keys(updateData).length === 0){
+      throw new Error('No data to update');
+    }
+    await this.firestoreDb.collection('Profesores').doc(id).update(updateData);
   }
 
   async eliminarProfesorById(id: string) {

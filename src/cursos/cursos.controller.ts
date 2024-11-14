@@ -32,4 +32,11 @@ export class CursosController {
   eliminarCurso(@Param('id') id: string) {
     return this.cursosService.eliminarCurso(id);
   }
+
+  @Post("addAlumnoACurso")
+  async addAlumnoToCurso(@Body('cursoId') cursoId: string, @Body('alumnoId') alumnoId: string) {
+    return this.cursosService.addAlumnoToCurso(cursoId, alumnoId);
+  }
+  
+
 }
