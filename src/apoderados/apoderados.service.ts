@@ -99,7 +99,7 @@ export class ApoderadosService {
     const updateData: { [key: string]: any } = {};
     Object.keys(updateApoderadoDto).forEach(key => {
       const value = updateApoderadoDto[key];
-      if (value !== undefined) {
+      if (value !== undefined && value !== "") {
         updateData[key] = value;
       }
     });
