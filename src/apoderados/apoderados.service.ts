@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateApoderadoDto } from './dto/create-apoderado.dto';
 import { UpdateApoderadoDto } from './dto/update-apoderado.dto';
 import admin from 'firebase-admin'; 
@@ -115,8 +115,7 @@ export class ApoderadosService {
       const doc = await docRef.get();
   
       if (!doc.exists) {
-        console.log('No such document!');
-        return null; 
+        throw new UnauthorizedException('No such document!'); 
       }
 
       const alumnos = await this.getAlumnosToApoderado(id);
@@ -196,42 +195,18 @@ export class ApoderadosService {
 
   async getAlumnosToApoderado(apoderadoId: string): Promise<Alumno[] | null> {
     try {
-      const apoderadoRef = this.firestoreDb.collection('Apoderados').doc(apoderadoId);
-      const apoderadoDoc = await apoderadoRef.get();
-
-      if (!apoderadoDoc.exists) {
-        console.log('No such apoderado!');
+      const alumnosRef = this.firestoreDb.collection('Alumnos').where('apoderadoId', '==', apoderadoId);
+      const snapshot = await alumnosRef.get();
+      if (snapshot.empty) {
         return null;
       }
-
-      const apoderadoData = {
-        id: apoderadoDoc.id,
-        ...apoderadoDoc.data(),
-      } as Apoderado;
-
-      const alumnos: Alumno[] = [];
-
-      if (apoderadoData.alumnos) {
-        for (const alumno of apoderadoData.alumnos) {
-          const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumno.id);
-          const alumnoDoc = await alumnoRef.get();
-
-          if (alumnoDoc.exists) {
-            const alumnoData = {
-              id: alumnoDoc.id,
-              ...alumnoDoc.data(),
-            } as Alumno;
-            alumnos.push(alumnoData);
-          }
-        }
-      }
-
-      return alumnos; 
-
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Alumno[];
     } catch (error) {
-      throw new Error('Error getting alumnos for apoderado: ' + error.message);
+      console.error('Error fetching alumnos for apoderado:', error);
+      return null; 
     }
   }
+  
 
   
   
