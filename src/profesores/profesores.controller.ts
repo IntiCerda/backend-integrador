@@ -23,11 +23,13 @@ export class ProfesoresController {
     return this.profesoresService.getProfesorById(id);
   }
 
+  //Completar esta funcion
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProfesoreDto: UpdateProfesoreDto) {
-    return this.profesoresService.update(+id, updateProfesoreDto);
+    return this.profesoresService.update(id, updateProfesoreDto);
   }
 
+  //Verificar esta func
   @Delete(':id')
   eliminarProfesorById(@Param('id') id: string) {
     return this.profesoresService.eliminarProfesorById(id);

@@ -59,7 +59,7 @@ export class ProfesoresService {
     }
   }
 
-  update(id: number, updateProfesoreDto: UpdateProfesoreDto) {
+  update(id: string, updateProfesoreDto: UpdateProfesoreDto) {
     return `This action updates a #${id} profesore`;
   }
 
