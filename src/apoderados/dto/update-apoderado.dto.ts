@@ -3,8 +3,7 @@ import { CreateApoderadoDto } from './create-apoderado.dto';
 
 export class UpdateApoderadoDto extends PartialType(CreateApoderadoDto) {
 
-    
-
-
+    nombre?: string;
+    apellido?: string;
 
 }

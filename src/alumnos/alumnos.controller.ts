@@ -40,7 +40,6 @@ export class AlumnosController {
       await this.alumnosService.associateAlumnosWithApoderados();
       return 'Alumnos asociados con apoderados correctamente.';
     } catch (error) {
-      // Manejo de errores en caso de que ocurra algún problema
       console.error(error);
       throw new Error('Error al asociar alumnos con apoderados.');
     }
