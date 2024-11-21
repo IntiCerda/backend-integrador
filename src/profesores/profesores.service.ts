@@ -3,6 +3,7 @@ import { CreateProfesoreDto } from './dto/create-profesore.dto';
 import { UpdateProfesoreDto } from './dto/update-profesore.dto';
 import admin from 'src/firebase.config';
 import { Profesore } from './entities/profesore.entity';
+import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 
 @Injectable()
 export class ProfesoresService {
@@ -62,19 +63,26 @@ export class ProfesoresService {
   async update(id: string, updateProfesoreDto: UpdateProfesoreDto) {
     const profesor = await this.getProfesorById(id);
     if(!profesor){
-      throw new Error('Profesor not found');
+      throw new Error('No such document!');
     }
-    const updateData: {[key: string]: any} = {};
+    const updateData: {[key:string]: any } = {};
     Object.keys(updateProfesoreDto).forEach(key => {
       const value = updateProfesoreDto[key];
-      if(value !== undefined && value !== ""){
+      if(value !== undefined){
         updateData[key] = value;
       }
     });
+
     if(Object.keys(updateData).length === 0){
       throw new Error('No data to update');
     }
+
     await this.firestoreDb.collection('Profesores').doc(id).update(updateData);
+    return {
+      ...profesor,
+      ...updateData,
+    } as Profesore;
+
   }
 
   async eliminarProfesorById(id: string) {
@@ -99,4 +107,41 @@ export class ProfesoresService {
     }
 
   }
+
+  async asignarAsignatura(idProfesor: string, idAsignatura: string){
+    try{
+      const profeRef = this.firestoreDb.collection('Profesores').doc(idProfesor);
+      const profeDoc =  await profeRef.get();
+      if(!profeDoc.exists){
+        throw new Error('No such document!');
+      }
+      const profeData = {
+        id: profeDoc.id,
+        ...profeDoc.data(),
+      } as Profesore;
+
+      const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(idAsignatura);
+      const asignaturaDoc = await asignaturaRef.get();
+      if(!asignaturaDoc.exists){
+        throw new Error('No such document!');
+      }
+      const asignaturaData = {
+        id: asignaturaDoc.id,
+        ...asignaturaDoc.data(),
+      } as Asignatura;
+
+      if(!profeData.asignaturas.some(a => a.id === idAsignatura)){
+        profeData.asignaturas.push(asignaturaData);
+        await profeRef.update({asignaturas : profeData.asignaturas});
+      }
+      return {
+        ...profeData,
+        asignaturas: profeData.asignaturas,
+      }
+
+    }catch(error){
+      throw new Error('Error asignando asignatura: ' + error.message);
+    }
+  }
+
 }

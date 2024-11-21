@@ -31,4 +31,10 @@ export class ForoController {
   async removeForo(@Param('id') id: string) {
     return this.foroService.removeForo(id);
   }
+
+  @Patch(':id')
+  asignarAsignatura(@Param('id') id: string, @Body() asignatura: string) {
+    return this.foroService.asignarAsignatura(id, asignatura);
+  }
+  
 }

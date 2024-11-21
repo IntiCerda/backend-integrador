@@ -1,5 +1,7 @@
 
 import {IsString, MinLength } from 'class-validator';
+import { Asistencia } from 'src/asistencia/entities/asistencia.entity';
+import { Nota } from 'src/notas/entities/nota.entity';
 
 export class Alumno  {
     id: string;
@@ -28,14 +30,14 @@ export class Alumno  {
     @MinLength(6)
     curso : string;
 
-    @IsString()
-    @MinLength(6)
-    nivel?: string;
+    asistencia: Asistencia[];
 
-    @IsString()
-    @MinLength(6)
-    asistencia?: string;
+    notas : Nota[];
 
+    constructor(){
+        this.asistencia = [];
+        this.notas = [];
+    }
 
 
 

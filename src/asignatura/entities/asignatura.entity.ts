@@ -21,10 +21,6 @@ export class Asignatura {
 
      @IsString()
      @MinLength(1)
-     horario?: string;
-    
-     @IsString()
-     @MinLength(1)
      descripcion?: string;
     
 

@@ -1,4 +1,5 @@
 import {IsString, MinLength } from 'class-validator';
+import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 export class Foro {
 
     @IsString()
@@ -24,5 +25,8 @@ export class Foro {
     @MinLength(1)
     fecha: string;
 
-
+    asignaturas : Asignatura[];
+    constructor() {
+        this.asignaturas = [];
+    }
 }

@@ -3,6 +3,7 @@ import { CreateForoDto } from './dto/create-foro.dto';
 import { UpdateForoDto } from './dto/update-foro.dto';
 import admin from 'firebase-admin'; 
 import { Foro } from './entities/foro.entity';
+import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 
 @Injectable()
 export class ForoService {
@@ -104,4 +105,36 @@ export class ForoService {
       throw new Error('Error deleting foro: ' + error.message);
     }
   }
+
+  async asignarAsignatura(id: string, asignaturaId: string):Promise<Foro> {
+    try{
+      const foroExiste = await this.firestoreDb.collection('Foro').doc(id).get();
+      if(!foroExiste.exists){
+        throw new Error('Foro does not exist');
+      }
+
+      const asignaturaExiste = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
+      if(!asignaturaExiste.exists){
+        throw new Error('Asignatura does not exist');
+      }
+
+      const asignaturaData = {
+        id: asignaturaExiste.id,
+        ...asignaturaExiste.data(),
+      } as Asignatura;
+
+      if(!foroExiste.data().asignaturas.some(a => a.id === asignaturaId)){
+        foroExiste.data().asignaturas.push(asignaturaData);
+        await this.firestoreDb.collection('Foro').doc(id).update({asignaturas : asignaturaData});
+      }
+      return{
+        ...foroExiste.data(),
+        id: id,
+      }as Foro;
+
+    }catch(error){
+      throw new Error('Error asigning asignatura: ' + error.message);
+    }
+  }
+
 }

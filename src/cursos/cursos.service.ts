@@ -126,5 +126,21 @@ export class CursosService {
       throw new Error('Error adding alumno to curso: ' + error.message);
     }
   }
+  
+  async getAlumnosByCursoId(id: string) {
+    try{
+      const snapshot = await this.firebaseDb.collection('Cursos').doc(id).collection('Alumnos').get();
+      const alumnos = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+        }as Alumno;
+      });
+      return alumnos;
+    }catch(error){
+      throw new Error('Error retrieving alumnos');
+    }
+  }
 
 }

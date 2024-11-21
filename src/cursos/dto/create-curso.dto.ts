@@ -1,4 +1,5 @@
 import {IsString, MinLength } from 'class-validator';
+import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 export class CreateCursoDto {
 
@@ -10,4 +11,5 @@ export class CreateCursoDto {
     @MinLength(1)
     year: string;
 
+    
 }

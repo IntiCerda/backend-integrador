@@ -10,17 +10,10 @@ export class Nota {
 
     @IsString()
     @MinLength(1)
-    alumno: string;
+    alumnoId: string;
 
     @IsString()
-    @MinLength(1)
-    profesor: string;
-
-    @IsString()
-    curso: string;
-
-    @IsString()
-    asignatura: string;
+    asignaturaId: string;
 
     @IsString()
     @MinLength(1)
