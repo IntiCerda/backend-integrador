@@ -3,6 +3,8 @@ import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
 import admin from 'src/firebase.config';
 import { Curso } from './entities/curso.entity';
+import { AlumnosService } from 'src/alumnos/alumnos.service';
+import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 @Injectable()
 export class CursosService {
@@ -71,4 +73,21 @@ export class CursosService {
       throw new Error('Error deleting curso: ' + error.message);
     }
   }
+
+  async getAlumnosByCursoId(id: string) {
+    try{
+      const snapshot = await this.firebaseDb.collection('Cursos').doc(id).collection('Alumnos').get();
+      const alumnos = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          id: doc.id,
+        }as Alumno;
+      });
+      return alumnos;
+    }catch(error){
+      throw new Error('Error retrieving alumnos');
+    }
+  }
+
 }

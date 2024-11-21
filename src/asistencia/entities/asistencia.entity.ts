@@ -7,13 +7,12 @@ export class Asistencia {
 
     @IsString()
     @MinLength(1)
-    curso: string;
+    cursoId: string;
 
     @IsString()
     @MinLength(1)
     fecha: string;
 
-
-
+    asistencia: boolean;
 
 }
