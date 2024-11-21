@@ -34,4 +34,9 @@ export class ProfesoresController {
   eliminarProfesorById(@Param('id') id: string) {
     return this.profesoresService.eliminarProfesorById(id);
   }
+
+  @Patch(':id')
+  asignarAsignatura(@Param('id') id: string, @Body() asignatura: string) {
+    return this.profesoresService.asignarAsignatura(id, asignatura);
+  }
 }

@@ -1,4 +1,5 @@
 import {IsString, MinLength, IsEmail } from 'class-validator';
+import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 
 export class Profesore {
 
@@ -12,6 +13,9 @@ export class Profesore {
     @MinLength(1)
     apellido: string;
 
+    asignaturas : Asignatura[];
 
-
+    constructor() {
+        this.asignaturas = [];
+    }
 }
