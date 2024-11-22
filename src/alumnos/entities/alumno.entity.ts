@@ -31,7 +31,6 @@ export class Alumno  {
     curso : string;
 
     asistencia: Asistencia[];
-
     notas : Nota[];
 
     constructor(){
