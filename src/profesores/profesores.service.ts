@@ -146,11 +146,6 @@ export class ProfesoresService {
 
   async getAsignaturasdeUnProfesor(id: string): Promise<Asignatura[]> {
     try {
-      const profeExiste = await this.getProfesorById(id);
-      if (!profeExiste) {
-        throw new Error('No such document!');
-      }
-  
       const profeRef = this.firestoreDb.collection('Profesores').doc(id);
       const profeDoc = await profeRef.get();
   
@@ -175,11 +170,8 @@ export class ProfesoresService {
           } as Asignatura);
         }
       }
-      if(asignaturas.length === 0){
-        throw new Error('No asignaturas found');
-      }
-
       return asignaturas;
+      
     } catch (error) {
       throw new Error('Error retrieving asignaturas: ' + error.message);
     }
