@@ -175,7 +175,10 @@ export class ProfesoresService {
           } as Asignatura);
         }
       }
-  
+      if(asignaturas.length === 0){
+        throw new Error('No asignaturas found');
+      }
+
       return asignaturas;
     } catch (error) {
       throw new Error('Error retrieving asignaturas: ' + error.message);
