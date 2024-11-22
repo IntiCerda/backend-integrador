@@ -144,4 +144,43 @@ export class ProfesoresService {
     }
   }
 
+  async getAsignaturasdeUnProfesor(id: string): Promise<Asignatura[]> {
+    try {
+      const profeExiste = await this.getProfesorById(id);
+      if (!profeExiste) {
+        throw new Error('No such document!');
+      }
+  
+      const profeRef = this.firestoreDb.collection('Profesores').doc(id);
+      const profeDoc = await profeRef.get();
+  
+      if (!profeDoc.exists) {
+        throw new Error('No such profesor!');
+      }
+  
+      const asignaturasData = profeDoc.data()?.asignaturas || [];
+      const asignaturas: Asignatura[] = [];
+  
+      for (const asignaturaId of asignaturasData) {
+        const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(asignaturaId);
+        const asignaturaDoc = await asignaturaRef.get();
+  
+        if (asignaturaDoc.exists) {
+          asignaturas.push({
+            id: asignaturaId,
+            nombre: asignaturaDoc.data()?.nombre,
+            descripcion: asignaturaDoc.data()?.descripcion,
+            profesor: { id: id, ...profeDoc.data() }, 
+            curso: asignaturaDoc.data()?.curso, 
+          } as Asignatura);
+        }
+      }
+  
+      return asignaturas;
+    } catch (error) {
+      throw new Error('Error retrieving asignaturas: ' + error.message);
+    }
+  }
+
+
 }

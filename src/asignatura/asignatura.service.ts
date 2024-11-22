@@ -5,6 +5,7 @@ import admin from 'firebase-admin';
 import { Asignatura } from './entities/asignatura.entity';
 import { CursosService } from 'src/cursos/cursos.service';
 import { ProfesoresService } from 'src/profesores/profesores.service';
+import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 
 @Injectable()
@@ -127,6 +128,47 @@ export class AsignaturaService {
 
       }catch(error){
       throw new Error('Error setting asignatura to profesor');
+    }
+  }
+
+
+  async getCursosDeAsignatura(id: string): Promise<Asignatura | null> {
+    try{
+      const doc = await this.firestoreDb.collection('Asignaturas').doc(id).get();
+      if(!doc.exists){
+        throw new UnauthorizedException('No such document!');
+      }
+      const asignaturaData = doc.data() as Asignatura;
+      return{
+        ...asignaturaData,
+        id: doc.id,
+      } as Asignatura;
+    }catch(error){
+      throw new Error('Error getting cursos de asignatura');
+    }
+  }
+
+  //funcion que retorna los alumnos de el curso de la asignatura
+  async getAlumnosDeAsignatura(id: string): Promise<Alumno[] | null> {
+    try{
+      const doc = await this.firestoreDb.collection('Asignaturas').doc(id).get();
+      if(!doc.exists){
+        throw new UnauthorizedException('No such document!');
+      }
+      
+      const asignaturaData = doc.data() as Asignatura;
+      const cursoId = asignaturaData.curso.id;
+      const cursoDoc = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
+      if(!cursoDoc.exists){
+        throw new UnauthorizedException('No such document!');
+      }
+      const cursoData = cursoDoc.data();
+      const alumnos = cursoData.alumnos as Alumno[];
+      
+      return alumnos;
+
+    }catch(error){
+      throw new Error('Error getting alumnos de asignatura');
     }
   }
 

@@ -38,4 +38,15 @@ export class AsignaturaController {
   : Promise<Asignatura | null> {
     return this.asignaturaService.setAsignaturaToProfesor(asignaturaId, profesorId);
   }
+
+  @Get(':id/profesor')
+  getCursosdeAsignatura(@Param('id') id: string) {
+    return this.asignaturaService.getCursosDeAsignatura(id);
+  }
+
+  @Get(':id/alumnos')
+  getAlumnosdeAsignatura(@Param('id') id: string) {
+    return this.asignaturaService.getAlumnosDeAsignatura(id);
+  }
+
 }

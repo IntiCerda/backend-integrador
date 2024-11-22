@@ -3,6 +3,7 @@ import { ProfesoresService } from './profesores.service';
 import { CreateProfesoreDto } from './dto/create-profesore.dto';
 import { UpdateProfesoreDto } from './dto/update-profesore.dto';
 import { Profesore } from './entities/profesore.entity';
+import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
 
 @Controller('profesores')
 export class ProfesoresController {
@@ -38,5 +39,10 @@ export class ProfesoresController {
   @Patch(':id')
   asignarAsignatura(@Param('id') id: string, @Body() asignatura: string) {
     return this.profesoresService.asignarAsignatura(id, asignatura);
+  }
+
+  @Get(':id/asignaturas')
+  getAsignaturasdeUnProfesor(@Param('id') id: string): Promise<Asignatura[]> {
+    return this.profesoresService.getAsignaturasdeUnProfesor(id);
   }
 }
