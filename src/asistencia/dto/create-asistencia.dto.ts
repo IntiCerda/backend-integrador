@@ -4,11 +4,12 @@ import { IsString, MinLength } from "class-validator";
 export class CreateAsistenciaDto {
     @IsString()
     @MinLength(1)
-    curso: string;
+    cursoId: string;
 
     @IsString()
     @MinLength(1)
     fecha: string;
 
+    asistencia: boolean;
 
 }

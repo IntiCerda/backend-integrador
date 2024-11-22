@@ -11,11 +11,9 @@ export class NotasService {
   async create(createNotaDto: CreateNotaDto): Promise<Nota> {
     try{
       
-      const {calificacion, alumnoId, profesorId, cursoId, fecha, asignaturaId } = createNotaDto;
+      const {calificacion, alumnoId, asignaturaId, fecha,  } = createNotaDto;
 
-      const profesorExiste = await this.firestoreDb.collection('Profesores').doc(profesorId).get();
       const alumnoExiste = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
-      const cursoExiste = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
       const asignaturaExiste = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
 
 
@@ -23,13 +21,6 @@ export class NotasService {
         throw new Error('Alumno does not exist');
       }
 
-      if(!profesorExiste.exists){
-        throw new Error('Profesor does not exist');
-      }
-
-      if(!cursoExiste.exists){
-        throw new Error('Curso does not exist');
-      }
 
       if(!asignaturaExiste.exists){
         throw new Error('Asignatura does not exist');
@@ -40,10 +31,8 @@ export class NotasService {
       const data = {
         id: docRef.id,
         calificacion: calificacion,
-        alumno : alumnoExiste.data().nombre,
-        profesor : profesorExiste.data().nombre,
-        curso : cursoExiste.data().nombre,
-        asignatura : asignaturaExiste.data().nombre,
+        alumnoId : alumnoExiste.data().id,
+        asignaturaId : asignaturaExiste.data().id,
         fecha : fecha
         
       };
@@ -52,10 +41,8 @@ export class NotasService {
       return {
         id: docRef.id,
         calificacion: calificacion,
-        alumno : alumnoExiste.data().name,
-        profesor : profesorExiste.data().nombre,
-        curso : cursoExiste.data().nombre,
-        asignatura : asignaturaExiste.data().nombre,
+        alumnoId : alumnoExiste.data().id,
+        asignaturaId : asignaturaExiste.data().id,
         fecha : fecha
       } as Nota;
 
@@ -71,7 +58,7 @@ export class NotasService {
       const notas: Nota[] = notasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Nota));
   
       
-      const alumnoIds = [...new Set(notas.map(nota => nota.alumno))];
+      const alumnoIds = [...new Set(notas.map(nota => nota.alumnoId))];
   
       
       const alumnosSnapshot = await this.firestoreDb.collection('Alumnos').get();
@@ -85,7 +72,7 @@ export class NotasService {
       const notasPorAlumno = alumnoIds.map(alumnoId => ({
         alumnoId: alumnoId,
         nombre: alumnosMap[alumnoId] || null,
-        notas: notas.filter(nota => nota.alumno === alumnoId),
+        notas: notas.filter(nota => nota.alumnoId === alumnoId),
       }));
   
       
