@@ -158,10 +158,6 @@ export class ProfesoresService {
       const asignaturas: Asignatura[] = [];
       console.log(asignaturasData);
       
-      if(asignaturas.length === 0){
-        return null;
-      }
-      
       return asignaturas;
       
     } catch (error) {
