@@ -156,21 +156,12 @@ export class ProfesoresService {
   
       const asignaturasData = profeDoc.data()?.asignaturas || [];
       const asignaturas: Asignatura[] = [];
-  
-      for (const asignaturaId of asignaturasData) {
-        const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(asignaturaId);
-        const asignaturaDoc = await asignaturaRef.get();
-  
-        if (asignaturaDoc.exists) {
-          asignaturas.push({
-            id: asignaturaId,
-            nombre: asignaturaDoc.data()?.nombre,
-            descripcion: asignaturaDoc.data()?.descripcion,
-            profesor: { id: id, ...profeDoc.data() }, 
-            curso: asignaturaDoc.data()?.curso, 
-          } as Asignatura);
-        }
+      console.log(asignaturasData);
+      
+      if(asignaturas.length === 0){
+        return null;
       }
+      
       return asignaturas;
       
     } catch (error) {
