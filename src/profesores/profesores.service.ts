@@ -148,7 +148,8 @@ export class ProfesoresService {
     try {
       const profeRef = this.firestoreDb.collection('Profesores').doc(id);
       const profeDoc = await profeRef.get();
-  
+      console.log(profeDoc.data());
+      
       if (!profeDoc.exists) {
         throw new Error('No such profesor!');
       }
