@@ -7,7 +7,7 @@ import { UpdateAsistenciaDto } from './dto/update-asistencia.dto';
 export class AsistenciaController {
   constructor(private readonly asistenciaService: AsistenciaService) {}
 
-  @Post()
+  @Post('crearAsistencia')
   async create(@Body() createAsistenciaDto: CreateAsistenciaDto) {
     return this.asistenciaService.create(createAsistenciaDto);
   }

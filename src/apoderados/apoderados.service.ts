@@ -91,10 +91,10 @@ export class ApoderadosService {
     }
   }
 
-  async update(id: string, updateApoderadoDto: UpdateApoderadoDto) { 
-    const apoderado =  await this.getApoderadoById(id);
+  async update(updateApoderadoDto: UpdateApoderadoDto) { 
+    const apoderado =  await this.getApoderadoById(updateApoderadoDto.id);
     if (!apoderado) {
-      throw new NotFoundException(`Alumno con ID ${id} no encontrado`);
+      throw new NotFoundException(`Alumno con ID ${updateApoderadoDto.id} no encontrado`);
     }
     const updateData: { [key: string]: any } = {};
     Object.keys(updateApoderadoDto).forEach(key => {
@@ -106,7 +106,7 @@ export class ApoderadosService {
     if (Object.keys(updateData).length === 0) {
       throw new Error('No data to update');
     }
-    await this.firestoreDb.collection('Apoderados').doc(id).update(updateData);
+    await this.firestoreDb.collection('Apoderados').doc(updateApoderadoDto.id).update(updateData);
   }
 
   async eliminarApoderadoById(id: string): Promise<Apoderado | null> {

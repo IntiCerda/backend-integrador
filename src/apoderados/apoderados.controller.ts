@@ -26,9 +26,9 @@ export class ApoderadosController {
     return this.apoderadosService.getApoderadoById(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateApoderadoDto: UpdateApoderadoDto) {
-    return this.apoderadosService.update(id, updateApoderadoDto);
+  @Patch('update')
+  update(@Body() updateApoderadoDto: UpdateApoderadoDto) {
+    return this.apoderadosService.update(updateApoderadoDto);
   }
 
   @Delete(':id')
