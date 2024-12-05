@@ -37,7 +37,9 @@ export class AsignaturaService {
        }
 
        await docRef.set(data);
+       await this.profesorService.asignarAsignatura(profesorE.id, docRef.id);
        
+
        return {
         ...data
       } as Asignatura;

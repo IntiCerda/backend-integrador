@@ -31,7 +31,6 @@ export class AlumnosService {
     }catch(error){
       throw new Error('Error creating alumno');
     }
-
   }
 
   async findAll(): Promise<{ id: string; nombre: string; apoderadoNombre: string | null }[]> {

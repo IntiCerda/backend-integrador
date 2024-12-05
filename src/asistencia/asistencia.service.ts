@@ -37,4 +37,47 @@ export class AsistenciaService {
   remove(id: number) {
     return `This action removes a #${id} asistencia`;
   }
+
+  async createBulkAsistencia(asistencias: CreateAsistenciaDto[]): Promise<Asistencia[]> {
+    const resultados: Asistencia[] = [];
+  
+    try {
+      const batch = this.firestoreDb.batch();
+  
+      for (const asistencia of asistencias) {
+        const alumnoRef = this.firestoreDb.collection('Alumnos').doc(asistencia.alumnoId);
+        const alumnoDoc = await alumnoRef.get();
+  
+        if (!alumnoDoc.exists) {
+          throw new Error(`Alumno con ID ${asistencia.alumnoId} no encontrado`);
+        }
+  
+        const asistenciaData = {
+          cursoId: asistencia.cursoId,
+          alumnoId: asistencia.alumnoId,
+          fecha: asistencia.fecha,
+          asistencia: asistencia.asistencia,
+        };
+  
+        const alumnoData = alumnoDoc.data();
+        const asistenciasActuales = alumnoData.asistencia || [];
+        asistenciasActuales.push(asistenciaData);
+  
+        batch.update(alumnoRef, { asistencia: asistenciasActuales });
+  
+        resultados.push({
+          id: alumnoDoc.id,
+          ...asistenciaData,
+        } as Asistencia);
+      }
+  
+      await batch.commit(); 
+      return resultados;
+  
+    } catch (error) {
+      throw new Error('Error creando asistencias: ' + error.message);
+    }
+  }
+
+
 }

@@ -31,4 +31,10 @@ export class AsistenciaController {
   remove(@Param('id') id: string) {
     return this.asistenciaService.remove(+id);
   }
+
+  @Post('bulk')
+  async createBulk(@Body() asistencias: CreateAsistenciaDto[]) {
+    return this.asistenciaService.createBulkAsistencia(asistencias);
+  }
+
 }
