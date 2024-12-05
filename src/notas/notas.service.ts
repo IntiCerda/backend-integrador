@@ -130,4 +130,53 @@ export class NotasService {
       throw new Error('Error eliminando la nota: ' + error.message);
     }
   }
+
+  async createBulkNotas(notas: CreateNotaDto[]): Promise<Nota[]> {
+    const resultados: Nota[] = [];
+  
+    try {
+      const batch = this.firestoreDb.batch();
+  
+      for (const nota of notas) {
+        const { alumnoId, asignaturaId } = nota;
+  
+        const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumnoId);
+        const alumnoDoc = await alumnoRef.get();
+        if (!alumnoDoc.exists) {
+          throw new Error(`Alumno con ID ${alumnoId} no encontrado`);
+        }
+  
+        const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(asignaturaId);
+        const asignaturaDoc = await asignaturaRef.get();
+        if (!asignaturaDoc.exists) {
+          throw new Error(`Asignatura con ID ${asignaturaId} no encontrada`);
+        }
+  
+        const docRef = this.firestoreDb.collection('Notas').doc();
+        const notaData = {
+          id: docRef.id,
+          calificacion: nota.calificacion,
+          alumnoId: alumnoId,
+          asignaturaId: asignaturaId,
+          fecha: nota.fecha,
+        };
+  
+        batch.set(docRef, notaData);
+  
+        const alumnoData = alumnoDoc.data();
+        const notasActuales = alumnoData.notas || [];
+        notasActuales.push(notaData);
+        batch.update(alumnoRef, { notas: notasActuales }); 
+  
+        resultados.push(notaData); 
+      }
+  
+      await batch.commit(); 
+      return resultados;
+  
+    } catch (error) {
+      throw new Error('Error creando notas: ' + error.message);
+    }
+  }
+
 }
