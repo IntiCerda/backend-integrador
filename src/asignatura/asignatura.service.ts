@@ -6,6 +6,7 @@ import { Asignatura } from './entities/asignatura.entity';
 import { CursosService } from 'src/cursos/cursos.service';
 import { ProfesoresService } from 'src/profesores/profesores.service';
 import { Alumno } from 'src/alumnos/entities/alumno.entity';
+import { Curso } from 'src/cursos/entities/curso.entity';
 
 
 @Injectable()
@@ -207,5 +208,7 @@ export class AsignaturaService {
       throw new Error('Error getting alumnos de asignatura: ' + error.message);
     }
   }
+
+
 
 }
