@@ -173,27 +173,33 @@ export class AsignaturaService {
     }
   }
 
-  //funcion que retorna los alumnos de el curso de la asignatura
-  async getAlumnosDeAsignatura(id: string): Promise<Alumno[] | null> {
-    try{
+  async getAlumnosDeAsignatura(id: string): Promise<{ id: string, nombre: string, apellido: string }[] | null> {
+    try {
       const doc = await this.firestoreDb.collection('Asignaturas').doc(id).get();
-      if(!doc.exists){
-        throw new UnauthorizedException('No such document!');
+      if (!doc.exists) {
+        throw new UnauthorizedException('Asignatura no encontrada!');
       }
       
       const asignaturaData = doc.data() as Asignatura;
       const cursoId = asignaturaData.curso.id;
       const cursoDoc = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
-      if(!cursoDoc.exists){
-        throw new UnauthorizedException('No such document!');
+      if (!cursoDoc.exists) {
+        throw new UnauthorizedException('Curso no encontrado!');
       }
+  
       const cursoData = cursoDoc.data();
       const alumnos = cursoData.alumnos as Alumno[];
-      
-      return alumnos;
-
-    }catch(error){
-      throw new Error('Error getting alumnos de asignatura');
+  
+      const result = alumnos.map(alumno => ({
+        id: alumno.id, 
+        nombre: alumno.nombre, 
+        apellido: alumno.apellido
+      }));
+  
+      return result;
+  
+    } catch (error) {
+      throw new Error('Error getting alumnos de asignatura: ' + error.message);
     }
   }
 

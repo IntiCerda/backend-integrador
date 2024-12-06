@@ -4,6 +4,7 @@ import { UpdateProfesoreDto } from './dto/update-profesore.dto';
 import admin from 'src/firebase.config';
 import { Profesore } from './entities/profesore.entity';
 import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
+import { Alumno } from 'src/alumnos/entities/alumno.entity';
 
 @Injectable()
 export class ProfesoresService {
@@ -137,7 +138,6 @@ export class ProfesoresService {
         ...asignaturaDoc.data(),
       } as Asignatura;
   
-      // Comprueba si la asignatura ya está asignada
       if (!profeData.asignaturas.some(a => a.id === idAsignatura)) {
         profeData.asignaturas.push(asignaturaData);
         await profeRef.update({ asignaturas: profeData.asignaturas });
