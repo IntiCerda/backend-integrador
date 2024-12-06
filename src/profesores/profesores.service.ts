@@ -108,38 +108,45 @@ export class ProfesoresService {
 
   }
 
-  async asignarAsignatura(idProfesor: string, idAsignatura: string){
-    try{
+  async asignarAsignatura(idProfesor: string, idAsignatura: string) {
+    try {
       const profeRef = this.firestoreDb.collection('Profesores').doc(idProfesor);
-      const profeDoc =  await profeRef.get();
-      if(!profeDoc.exists){
+      const profeDoc = await profeRef.get();
+      if (!profeDoc.exists) {
         throw new Error('No such document!');
       }
+  
       const profeData = {
         id: profeDoc.id,
         ...profeDoc.data(),
       } as Profesore;
-
+  
+      if (!profeData.asignaturas) {
+        profeData.asignaturas = []; 
+      }
+  
       const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(idAsignatura);
       const asignaturaDoc = await asignaturaRef.get();
-      if(!asignaturaDoc.exists){
+      if (!asignaturaDoc.exists) {
         throw new Error('No such document!');
       }
+  
       const asignaturaData = {
         id: asignaturaDoc.id,
         ...asignaturaDoc.data(),
       } as Asignatura;
-
-      if(!profeData.asignaturas.some(a => a.id === idAsignatura)){
+  
+      if (!profeData.asignaturas.some(a => a.id === idAsignatura)) {
         profeData.asignaturas.push(asignaturaData);
-        await profeRef.update({asignaturas : profeData.asignaturas});
+        await profeRef.update({ asignaturas: profeData.asignaturas });
       }
+  
       return {
         ...profeData,
         asignaturas: profeData.asignaturas,
-      }
-
-    }catch(error){
+      };
+  
+    } catch (error) {
       throw new Error('Error asignando asignatura: ' + error.message);
     }
   }

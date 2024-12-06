@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateAsignaturaDto } from './dto/create-asignatura.dto';
 import { UpdateAsignaturaDto } from './dto/update-asignatura.dto';
 import admin from 'firebase-admin'; 
@@ -17,35 +17,39 @@ export class AsignaturaService {
 
   async create(createAsignaturaDto: CreateAsignaturaDto) { 
     try {
-      const {nombre,profesorId, cursoId } = createAsignaturaDto;
+      const { nombre, profesorId, cursoId } = createAsignaturaDto;
+  
       const profesorE = await this.profesorService.getProfesorById(profesorId);
-
-      if(!profesorE){
-        throw new UnauthorizedException('No such document!'); 
+      if (!profesorE) {
+        throw new NotFoundException('Profesor no encontrado.');
       }
+  
       const cursoE = await this.cursoService.getCursoById(cursoId);
-      if(!cursoE){
-        throw new UnauthorizedException('No such document!'); 
-      } 
-      const docRef = await this.firestoreDb.collection('Asignaturas').add(createAsignaturaDto);
-      
+      if (!cursoE) {
+        throw new NotFoundException('Curso no encontrado.');
+      }
+  
+      // Crear el documento en 'Asignaturas'
+      const docRef = await this.firestoreDb.collection('Asignaturas').add({
+        nombre,
+        profesor: profesorE,
+        curso: cursoE,
+      });
+  
       const data = {
         nombre: nombre,
-        profesor:profesorE,
+        profesor: profesorE,
         curso: cursoE,
         id: docRef.id,
-       }
-
-       await docRef.set(data);
-       await this.profesorService.asignarAsignatura(profesorE.id, docRef.id);
-       
-
-       return {
-        ...data
-      } as Asignatura;
-      
+      };
+  
+      // Asignar la asignatura al profesor
+      await this.profesorService.asignarAsignatura(profesorE.id, docRef.id);
+  
+      return data as Asignatura;
+  
     } catch (error) {
-      throw new Error('Error creating asignatura: ' + error.message);
+      throw new Error('Error creando asignatura: ' + error.message);
     }
   }
 
