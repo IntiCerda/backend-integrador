@@ -45,7 +45,7 @@ export class AsignaturaController {
   }
 
   @Get(':id/alumnos')
-  getAlumnosdeAsignatura(@Param('id') id: string) {
+  getAlumnosdeAsignatura(@Param('id') id: string): Promise<{ id: string, nombre: string, apellido: string }[] | null> {
     return this.asignaturaService.getAlumnosDeAsignatura(id);
   }
 

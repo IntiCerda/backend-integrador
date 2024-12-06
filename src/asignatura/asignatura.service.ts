@@ -179,21 +179,26 @@ export class AsignaturaService {
       if (!doc.exists) {
         throw new UnauthorizedException('Asignatura no encontrada!');
       }
-      
+  
       const asignaturaData = doc.data() as Asignatura;
       const cursoId = asignaturaData.curso.id;
+  
       const cursoDoc = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
       if (!cursoDoc.exists) {
         throw new UnauthorizedException('Curso no encontrado!');
       }
   
       const cursoData = cursoDoc.data();
-      const alumnos = cursoData.alumnos as Alumno[];
+      const alumnos = cursoData.alumnos; 
+  
+      if (!Array.isArray(alumnos)) {
+        throw new Error('No hay alumnos registrados en este curso o la estructura es incorrecta.');
+      }
   
       const result = alumnos.map(alumno => ({
         id: alumno.id, 
         nombre: alumno.nombre, 
-        apellido: alumno.apellido
+        apellido: alumno.apellido 
       }));
   
       return result;
