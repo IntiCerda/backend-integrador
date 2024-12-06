@@ -28,20 +28,23 @@ export class AsignaturaService {
       if (!cursoE) {
         throw new NotFoundException('Curso no encontrado.');
       }
-  
-      // Crear el documento en 'Asignaturas'
+      
+      const profesor = {
+        id: profesorE.id, 
+        nombre: profesorE.nombre, 
+        apellido: profesorE.apellido,
+        asignaturas: profesorE.asignaturas,
+      }
+
+      const curso = {
+        id: cursoE.id, 
+        nombre: cursoE.nombre,
+      }
+
       const docRef = await this.firestoreDb.collection('Asignaturas').add({
         nombre,
-        profesor: {
-          id: profesorE.id, 
-          nombre: profesorE.nombre, 
-          apellido: profesorE.apellido,
-          asignaturas: profesorE.asignaturas,
-        },
-        curso: {
-          id: cursoE.id, 
-          nombre: cursoE.nombre,
-        },
+        profesor: profesor ,
+        curso: curso,
       });
   
       const data = {

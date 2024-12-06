@@ -143,9 +143,7 @@ export class ProfesoresService {
         await profeRef.update({ asignaturas: profeData.asignaturas });
       }
   
-      return {
-        ...profeData,
-      };
+      return;
   
     } catch (error) {
       throw new Error('Error asignando asignatura: ' + error.message);
@@ -156,15 +154,18 @@ export class ProfesoresService {
     try {
       const profeRef = this.firestoreDb.collection('Profesores').doc(id);
       const profeDoc = await profeRef.get();
-      console.log(profeDoc.data());
       
       if (!profeDoc.exists) {
         throw new Error('No such profesor!');
       }
   
-      const asignaturasData = profeDoc.data()?.asignaturas || [];
-      const asignaturas: Asignatura[] = [];
-      console.log(asignaturasData);
+    const asignaturasData = profeDoc.data()?.asignaturas || [];
+
+    const asignaturas: Asignatura[] = asignaturasData.map(asignatura => ({
+      id: asignatura.id,
+      nombre: asignatura.nombre,
+      cursoNombre: asignatura.curso.nombre, 
+    }));
       
       return asignaturas;
       
