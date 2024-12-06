@@ -192,7 +192,7 @@ export class AsignaturaService {
       const alumnos = cursoData.alumnos; 
   
       if (!Array.isArray(alumnos)) {
-        throw new Error('No hay alumnos registrados en este curso o la estructura es incorrecta.');
+        return [];
       }
   
       const result = alumnos.map(alumno => ({
