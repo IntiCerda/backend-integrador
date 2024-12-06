@@ -32,24 +32,35 @@ export class AsignaturaService {
       // Crear el documento en 'Asignaturas'
       const docRef = await this.firestoreDb.collection('Asignaturas').add({
         nombre,
-        profesor: profesorE,
-        curso: cursoE,
+        profesor: {
+          id: profesorE.id, 
+          nombre: profesorE.nombre, 
+          apellido: profesorE.apellido,
+          asignaturas: profesorE.asignaturas,
+        },
+        curso: {
+          id: cursoE.id, 
+          nombre: cursoE.nombre,
+        },
       });
   
       const data = {
-        nombre: nombre,
-        profesor: profesorE,
-        curso: cursoE,
         id: docRef.id,
+        nombre,
+        profesor: {
+          id: profesorE.id, 
+          nombre: profesorE.nombre, 
+          apellido: profesorE.apellido,
+          asignaturas: profesorE.asignaturas,
+        },
+        curso: {
+          id: cursoE.id,
+          nombre: cursoE.nombre,
+        },
       };
   
-      // Verificar que los IDs sean strings
-      if (typeof profesorE.id !== 'string' || typeof docRef.id !== 'string') {
-        throw new Error('El ID del profesor o del documento no es una cadena.');
-      }
-  
-      // Asignar la asignatura al profesor
-      await this.profesorService.asignarAsignatura(profesorE.id, docRef.id);
+
+      this.profesorService.asignarAsignatura(profesorE.id, docRef.id);
   
       return data as Asignatura;
   

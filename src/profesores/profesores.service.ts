@@ -145,7 +145,6 @@ export class ProfesoresService {
   
       return {
         ...profeData,
-        asignaturas: profeData.asignaturas,
       };
   
     } catch (error) {
