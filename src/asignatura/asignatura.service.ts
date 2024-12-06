@@ -43,6 +43,11 @@ export class AsignaturaService {
         id: docRef.id,
       };
   
+      // Verificar que los IDs sean strings
+      if (typeof profesorE.id !== 'string' || typeof docRef.id !== 'string') {
+        throw new Error('El ID del profesor o del documento no es una cadena.');
+      }
+  
       // Asignar la asignatura al profesor
       await this.profesorService.asignarAsignatura(profesorE.id, docRef.id);
   

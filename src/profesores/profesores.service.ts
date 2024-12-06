@@ -121,8 +121,9 @@ export class ProfesoresService {
         ...profeDoc.data(),
       } as Profesore;
   
-      if (!profeData.asignaturas) {
-        profeData.asignaturas = []; 
+      // Asegúrate de que asignaturas existe y es un array
+      if (!Array.isArray(profeData.asignaturas)) {
+        profeData.asignaturas = []; // Inicializa como un arreglo vacío si no es un array
       }
   
       const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(idAsignatura);
@@ -136,6 +137,7 @@ export class ProfesoresService {
         ...asignaturaDoc.data(),
       } as Asignatura;
   
+      // Comprueba si la asignatura ya está asignada
       if (!profeData.asignaturas.some(a => a.id === idAsignatura)) {
         profeData.asignaturas.push(asignaturaData);
         await profeRef.update({ asignaturas: profeData.asignaturas });
