@@ -9,9 +9,6 @@ export class CreateNotaDto {
     alumnoId: string;
 
     @IsString()
-    cursoId: string;
-
-    @IsString()
     asignaturaId: string;
 
     @IsString()
