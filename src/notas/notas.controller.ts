@@ -32,4 +32,9 @@ export class NotasController {
   eliminarNota(@Param('id') id: string): Promise<void> {
     return this.notasService.eliminarNota(id);
   }
+
+  @Post('bulk')
+  async createBulkNotas(@Body() notas: CreateNotaDto[]) {
+    return this.notasService.createBulkNotas(notas);
+  }
 }
