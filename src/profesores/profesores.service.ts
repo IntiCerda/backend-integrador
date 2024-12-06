@@ -164,7 +164,10 @@ export class ProfesoresService {
     const asignaturas: Asignatura[] = asignaturasData.map(asignatura => ({
       id: asignatura.id,
       nombre: asignatura.nombre,
-      cursoNombre: asignatura.curso.nombre, 
+      curso: {
+        id: asignatura.curso.id,
+        nombre: asignatura.curso.nombre,
+      }, 
     }));
       
       return asignaturas;

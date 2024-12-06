@@ -19,9 +19,4 @@ export class Asignatura {
      @MinLength(1)
      curso: Curso;
 
-     @IsString()
-     @MinLength(1)
-     descripcion?: string;
-    
-
 }
