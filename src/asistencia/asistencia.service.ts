@@ -53,7 +53,7 @@ export class AsistenciaService {
         }
   
         const asistenciaData = {
-          cursoId: asistencia.cursoId,
+          asignaturaId: asistencia.asignaturaId,
           alumnoId: asistencia.alumnoId,
           fecha: asistencia.fecha,
           asistencia: asistencia.asistencia,

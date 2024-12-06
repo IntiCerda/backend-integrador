@@ -182,18 +182,18 @@ export class AsignaturaService {
       }
   
       const asignaturaData = doc.data() as Asignatura;
-      const cursoId = asignaturaData.curso.id;
+      const cursoId = asignaturaData.curso.id; 
   
       const cursoDoc = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
       if (!cursoDoc.exists) {
         throw new UnauthorizedException('Curso no encontrado!');
       }
   
-      const cursoData = cursoDoc.data();
+      const cursoData = cursoDoc.data() as Curso;
       const alumnos = cursoData.alumnos; 
   
       if (!Array.isArray(alumnos)) {
-        return [];
+        return []; 
       }
   
       const result = alumnos.map(alumno => ({
@@ -201,7 +201,8 @@ export class AsignaturaService {
         nombre: alumno.nombre, 
         apellido: alumno.apellido 
       }));
-  
+      
+      console.log(result);
       return result;
   
     } catch (error) {

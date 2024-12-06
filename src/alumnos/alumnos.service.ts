@@ -4,6 +4,7 @@ import { UpdateAlumnoDto } from './dto/update-alumno.dto';
 import admin from 'firebase-admin'; 
 import { Alumno } from './entities/alumno.entity';
 import { ApoderadosService } from 'src/apoderados/apoderados.service';
+import { Curso } from 'src/cursos/entities/curso.entity';
 
 
 @Injectable()
@@ -12,26 +13,45 @@ export class AlumnosService {
   constructor(private readonly apoderadosService: ApoderadosService) {}
 
 
-  async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
-    try{
-
-      const apoderadoExiste = await this.apoderadosService.getApoderadoById(createAlumnoDto.apoderadoId);
-      if(!apoderadoExiste){
-        throw new UnauthorizedException('No such document!'); 
-      }
-
-      const docRef = await this.firestoreDb.collection('Alumnos').add(createAlumnoDto);
-      this.apoderadosService.addAlumnoToApoderado(createAlumnoDto.apoderadoId, docRef.id);
-      this.associateAlumnosWithApoderados();
-      return {
-        ...createAlumnoDto,
-        id: docRef.id,
-      } as Alumno;
-
-    }catch(error){
-      throw new Error('Error creating alumno');
+async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
+  try {
+    const apoderadoExiste = await this.apoderadosService.getApoderadoById(createAlumnoDto.apoderadoId);
+    if (!apoderadoExiste) {
+      throw new UnauthorizedException('No such document!'); 
     }
+
+    const docRef = await this.firestoreDb.collection('Alumnos').add(createAlumnoDto);
+    
+
+    await this.apoderadosService.addAlumnoToApoderado(createAlumnoDto.apoderadoId, docRef.id);
+
+    const cursoId = createAlumnoDto.curso; 
+    const cursoDoc = await this.firestoreDb.collection('Cursos').doc(cursoId).get();
+    if (!cursoDoc.exists) {
+      throw new Error('Curso no encontrado!');
+    }
+
+    const cursoData = cursoDoc.data() as Curso;
+
+    if (!Array.isArray(cursoData.alumnos)) {
+      cursoData.alumnos = []; 
+    }
+
+    cursoData.alumnos.push({ id: docRef.id, nombre: createAlumnoDto.nombre, apellido: createAlumnoDto.apellido} as Alumno); // Asegúrate de que el DTO tenga la información necesaria
+
+    await this.firestoreDb.collection('Cursos').doc(cursoId).update({
+      alumnos: cursoData.alumnos
+    });
+
+    return {
+      ...createAlumnoDto,
+      id: docRef.id,
+    } as Alumno;
+
+  } catch (error) {
+    throw new Error('Error creating alumno: ' + error.message);
   }
+}
 
   async findAll(): Promise<{ id: string; nombre: string; apoderadoNombre: string | null }[]> {
     try {

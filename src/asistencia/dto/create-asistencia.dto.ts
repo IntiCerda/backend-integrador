@@ -3,7 +3,7 @@ import { IsString } from "class-validator";
 
 export class CreateAsistenciaDto {
     @IsString()
-    cursoId: string;
+    asignaturaId: string;
 
     @IsString()
     alumnoId: string;

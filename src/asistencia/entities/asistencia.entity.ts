@@ -7,7 +7,7 @@ export class Asistencia {
 
     @IsString()
     @MinLength(1)
-    cursoId: string;
+    asignaturaId: string;
 
     @IsString()
     @MinLength(1)
