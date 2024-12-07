@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ForoService } from './foro.service';
 import { CreateForoDto } from './dto/create-foro.dto';
 import { UpdateForoDto } from './dto/update-foro.dto';
+import { Foro } from './entities/foro.entity';
 
 @Controller('foro')
 export class ForoController {
@@ -22,6 +23,17 @@ export class ForoController {
     return this.foroService.getForoById(id);
   }
 
+
+  @Get(':id')
+  async getForosProfesor(@Param('id') id: string): Promise<Foro[]> {
+    return this.foroService.getForosProfesor(id);
+  }
+
+  @Get(':id')
+  async getForosCurso(@Param('id') id: string): Promise<Foro[]> {
+    return this.foroService.getForosCurso(id);
+  }
+
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateForoDto: UpdateForoDto) {
     return this.foroService.update(+id, updateForoDto);
@@ -36,5 +48,7 @@ export class ForoController {
   asignarAsignatura(@Param('id') id: string, @Body() asignatura: string) {
     return this.foroService.asignarAsignatura(id, asignatura);
   }
+
+  
   
 }

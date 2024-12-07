@@ -9,43 +9,58 @@ export class NotasService {
   private firestoreDb = admin.firestore();
 
   async create(createNotaDto: CreateNotaDto): Promise<Nota> {
-    try{
-      
-      const {calificacion, alumnoId, asignaturaId, fecha,  } = createNotaDto;
-
-      const alumnoExiste = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
-      const asignaturaExiste = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
-
-
-      if(!alumnoExiste.exists){
+    try {
+      const { calificacion, alumnoId, asignaturaId, fecha } = createNotaDto;
+  
+      const alumnoRef = this.firestoreDb.collection('Alumnos').doc(alumnoId);
+      const asignaturaRef = this.firestoreDb.collection('Asignaturas').doc(asignaturaId);
+  
+      const alumnoExiste = await alumnoRef.get();
+      const asignaturaExiste = await asignaturaRef.get();
+  
+      if (!alumnoExiste.exists) {
         throw new Error('Alumno does not exist');
       }
-
-
-      if(!asignaturaExiste.exists){
+  
+      if (!asignaturaExiste.exists) {
         throw new Error('Asignatura does not exist');
       }
-      
+  
       const docRef = this.firestoreDb.collection('Notas').doc();
-
+  
       const data = {
         id: docRef.id,
         calificacion: calificacion,
-        alumnoId : alumnoExiste.data().id,
-        asignaturaId : asignaturaExiste.data().id,
-        fecha : fecha
-        
+        alumnoId: alumnoExiste.data().id,
+        asignaturaId: asignaturaExiste.data().id,
+        fecha: fecha
       };
+  
       await docRef.set(data);
-
+  
+      const alumnoData = alumnoExiste.data();
+      const nuevaNota = {
+        id: docRef.id,
+        calificacion: calificacion,
+        asignaturaId: asignaturaExiste.data().id,
+        fecha: fecha
+      };
+  
+      const notasActuales = alumnoData.notas || [];
+      notasActuales.push(nuevaNota);
+  
+      await alumnoRef.update({
+        notas: notasActuales
+      });
+  
       return {
         id: docRef.id,
         calificacion: calificacion,
-        alumnoId : alumnoExiste.data().id,
-        asignaturaId : asignaturaExiste.data().id,
-        fecha : fecha
+        alumnoId: alumnoData.id,
+        asignaturaId: asignaturaExiste.data().id,
+        fecha: fecha
       } as Nota;
-
+  
     } catch (error) {
       throw new Error('Error creating nota: ' + error.message);
     }   
@@ -87,20 +102,16 @@ export class NotasService {
 
   async getNotasDeUnAlumno(alumnoId: string): Promise<{ alumnoId: string; nombre: string; notas: Nota[] }> {
     try {
-      // Obtener el documento del alumno por su ID
       const alumnoDoc = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
       if (!alumnoDoc.exists) {
         throw new Error('Alumno no encontrado');
       }
   
       const alumnoData = alumnoDoc.data();
-      const nombreCompleto = `${alumnoData?.name} ${alumnoData?.lastName}`;
+      const nombreCompleto = `${alumnoData?.nombre} ${alumnoData?.apellido}`;
   
-      // Obtener las notas del alumno específico por su nombre
-      const notasSnapshot = await this.firestoreDb.collection('Notas').where('alumno', '==', alumnoData.nombre).get();
-      const notas: Nota[] = notasSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Nota));
+      const notas: Nota[] = alumnoData.notas || [];
   
-      // Retornar el resultado
       return {
         alumnoId: alumnoId,
         nombre: nombreCompleto,
@@ -168,7 +179,7 @@ export class NotasService {
         notasActuales.push(notaData);
         batch.update(alumnoRef, { notas: notasActuales }); 
   
-        resultados.push(notaData); 
+        resultados.push(notaData);
       }
   
       await batch.commit(); 

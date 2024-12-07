@@ -4,6 +4,7 @@ import { UpdateForoDto } from './dto/update-foro.dto';
 import admin from 'firebase-admin'; 
 import { Foro } from './entities/foro.entity';
 import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
+import { ForoComentario } from 'src/foro-comentario/entities/foro-comentario.entity';
 
 @Injectable()
 export class ForoService {
@@ -56,6 +57,7 @@ export class ForoService {
         const data = doc.data();
         return{
           ...data,
+          comentarios: data.comentarios || [],
           id: doc.id,
         }as Foro;
       });
@@ -136,5 +138,107 @@ export class ForoService {
       throw new Error('Error asigning asignatura: ' + error.message);
     }
   }
+
+  async asociarComentario(id: string, comentarioId: string): Promise<boolean> {
+    try {
+      const foroRef = this.firestoreDb.collection('Foro').doc(id);
+      const foroDoc = await foroRef.get();
+  
+      if (!foroDoc.exists) {
+        throw new Error('Foro does not exist');
+      }
+  
+      const comentarioRef = this.firestoreDb.collection('ForoComentario').doc(comentarioId);
+      const comentarioDoc = await comentarioRef.get();
+  
+      if (!comentarioDoc.exists) {
+        throw new Error('Comentario does not exist');
+      }
+  
+      const comentarioData = {
+        ...comentarioDoc.data(),
+      } as ForoComentario; 
+  
+      if (!foroDoc.data().comentarios.some(a => a.id === comentarioId)) {
+        const comentariosActuales = foroDoc.data().comentarios || [];
+        comentariosActuales.push(comentarioData);
+        await foroRef.update({ comentarios: comentariosActuales });
+      }
+  
+      return true; 
+  
+    } catch (error) {
+      console.error('Error asociando comentario:', error.message);
+      return false; 
+    }
+  }
+
+
+  async getForosProfesor(id: string): Promise<Foro[]> {
+    try {
+      const profesorRef = this.firestoreDb.collection('Profesores').doc(id);
+      const profesorDoc = await profesorRef.get();
+  
+      if (!profesorDoc.exists) {
+        throw new Error('Profesor does not exist');
+      }
+  
+      const profesorId = profesorDoc.data()?.id;
+      if (!profesorId) {
+        throw new Error('Profesor name not found');
+      }
+  
+      const forosRef = this.firestoreDb.collection('Foro').where('profesor', '==', profesorId);
+      const forosSnapshot = await forosRef.get();
+  
+      const foros: Foro[] = forosSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          comentarios: data.comentarios || [],
+          id: doc.id,
+        } as Foro;
+      });
+  
+      return foros;
+  
+    } catch (error) {
+      console.error('Error getting foros profesor:', error.message);
+      return []; 
+    }
+  }
+
+  async getForosCurso(id: string): Promise<Foro[]> {
+    try {
+      const cursoRef = this.firestoreDb.collection('Cursos').doc(id);
+      const cursoDoc = await cursoRef.get();
+  
+      if (!cursoDoc.exists) {
+        throw new Error('Curso does not exist');
+      }
+  
+      const cursoData = cursoDoc.data();
+      const cursoId = cursoData?.id || cursoDoc.id; 
+  
+      const forosRef = this.firestoreDb.collection('Foro').where('curso', '==', cursoId);
+      const forosSnapshot = await forosRef.get();
+  
+      const foros: Foro[] = forosSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          ...data,
+          comentarios: data.comentarios || [],
+          id: doc.id,
+        } as Foro;
+      });
+  
+      return foros;
+  
+    } catch (error) {
+      console.error('Error getting foros curso:', error.message);
+      return []; 
+    }
+  }
+
 
 }
