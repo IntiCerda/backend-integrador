@@ -18,7 +18,9 @@ import { ForoComentarioModule } from './foro-comentario/foro-comentario.module';
 import './firebase.config'; 
 
 @Module({
-  imports: [UsersModule, AlumnosModule, AsignaturaModule, ProfesoresModule, ApoderadosModule, CursosModule, PeriodoModule, AdminModule, NoticiasModule, ForoModule, ComentariosModule, AsistenciaModule, NotasModule, ForoComentarioModule], 
+  imports: [UsersModule, AlumnosModule, AsignaturaModule, ProfesoresModule, ApoderadosModule, CursosModule, 
+    PeriodoModule, AdminModule, NoticiasModule, ForoModule, ComentariosModule, AsistenciaModule, NotasModule,
+    ForoComentarioModule], 
   controllers: [AppController],
   providers: [AppService],
 })
