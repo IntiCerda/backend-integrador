@@ -14,10 +14,11 @@ import { ForoModule } from './foro/foro.module';
 import { ComentariosModule } from './comentarios/comentarios.module';
 import { AsistenciaModule } from './asistencia/asistencia.module';
 import { NotasModule } from './notas/notas.module';
+import { ForoComentarioModule } from './foro-comentario/foro-comentario.module';
 import './firebase.config'; 
 
 @Module({
-  imports: [UsersModule, AlumnosModule, AsignaturaModule, ProfesoresModule, ApoderadosModule, CursosModule, PeriodoModule, AdminModule, NoticiasModule, ForoModule, ComentariosModule, AsistenciaModule, NotasModule], 
+  imports: [UsersModule, AlumnosModule, AsignaturaModule, ProfesoresModule, ApoderadosModule, CursosModule, PeriodoModule, AdminModule, NoticiasModule, ForoModule, ComentariosModule, AsistenciaModule, NotasModule, ForoComentarioModule], 
   controllers: [AppController],
   providers: [AppService],
 })

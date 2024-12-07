@@ -161,6 +161,10 @@ export class ProfesoresService {
   
     const asignaturasData = profeDoc.data()?.asignaturas || [];
 
+    if (asignaturasData.length === 0) {
+      throw new Error('El profesor no tiene asignaturas asignadas.');
+    }
+
     const asignaturas: Asignatura[] = asignaturasData.map(asignatura => ({
       id: asignatura.id,
       nombre: asignatura.nombre,

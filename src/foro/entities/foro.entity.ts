@@ -1,5 +1,6 @@
 import {IsString, MinLength } from 'class-validator';
 import { Asignatura } from 'src/asignatura/entities/asignatura.entity';
+import { ForoComentario } from 'src/foro-comentario/entities/foro-comentario.entity';
 export class Foro {
 
     @IsString()
@@ -26,7 +27,10 @@ export class Foro {
     fecha: string;
 
     asignaturas : Asignatura[];
+    comentarios: ForoComentario[];
+    
     constructor() {
         this.asignaturas = [];
+        this.comentarios = [];
     }
 }
