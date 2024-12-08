@@ -202,7 +202,6 @@ export class AsignaturaService {
         apellido: alumno.apellido 
       }));
       
-      console.log(result);
       return result;
   
     } catch (error) {

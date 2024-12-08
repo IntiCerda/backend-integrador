@@ -24,7 +24,12 @@ export class ForoComentarioService {
   
       const userDoc = await userRef.get();
       if (!userDoc.exists) {
-        throw new Error('Apoderado does not exist');
+        const profesorRef = this.firestoreDb.collection('Profesores').doc(userId);
+        const profesorDoc = await profesorRef.get();
+  
+        if (!profesorDoc.exists) {
+          throw new Error('User does not exist ');
+        }
       }
   
       const data = {
