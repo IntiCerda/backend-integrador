@@ -24,10 +24,15 @@ export class ForoService {
         throw new Error('Asignatura does not exist');
       }
 
+      const profesroData = profesorExiste.data();
+      if(!profesroData || !profesroData.uid){
+        throw new Error('Profesor id not found');
+      }
+
       const data = {
         title : title,
         description : description,
-        profesor: profesorExiste.data().id,
+        profesor: profesroData.uid,
         asignatura : asignaturaSnapshot.data() as Asignatura,
         fecha : fecha
       } 
@@ -38,7 +43,7 @@ export class ForoService {
       return {
         title: title,
         description: description,
-        profesor: profesorExiste.data().id as string,
+        profesor: profesroData.uid as string,
         asignatura: asignaturaSnapshot.data() as Asignatura,
         fecha: fecha,
         id: docRef.id,
