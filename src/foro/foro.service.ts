@@ -180,6 +180,8 @@ export class ForoService {
 
   async getForosProfesor(id: string): Promise<Foro[]> {
     try {
+      const profesorId = id;
+
       const profesorRef = this.firestoreDb.collection('Profesores').doc(id);
       const profesorDoc = await profesorRef.get();
   
@@ -187,12 +189,7 @@ export class ForoService {
         throw new Error('Profesor does not exist');
       }
   
-      const profesorId = profesorDoc.data()?.id;
-      if (!profesorId) {
-        throw new Error('Profesor name not found');
-      }
-  
-      const forosRef = this.firestoreDb.collection('Foro').where('profesor', '==', profesorId);
+      const forosRef = this.firestoreDb.collection('Foro').where('profesorId', '==', profesorId);
       const forosSnapshot = await forosRef.get();
   
       const foros: Foro[] = forosSnapshot.docs.map(doc => {
