@@ -18,8 +18,6 @@ export class Foro {
     @MinLength(1)
     profesorId: string;
 
-    @IsString()
-    @MinLength(1)
     asignatura: Asignatura;
 
     @IsString()
