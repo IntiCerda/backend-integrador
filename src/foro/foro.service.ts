@@ -21,7 +21,7 @@ export class ForoService {
 
       const asignaturaSnapshot = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
       if(!asignaturaSnapshot.exists){
-        throw new Error('Curso does not exist');
+        throw new Error('Asignatura does not exist');
       }
 
       const data = {
