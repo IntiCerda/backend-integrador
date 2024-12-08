@@ -10,48 +10,46 @@ import { ForoComentario } from 'src/foro-comentario/entities/foro-comentario.ent
 export class ForoService {
   private firestoreDb = admin.firestore();
 
-  async create(createForoDto: CreateForoDto):Promise<Foro> {
+  async create(createForoDto: CreateForoDto): Promise<Foro> {
     try {
-      const {title, description, profesorId, asignaturaId, fecha } = createForoDto;
-
+      const { title, description, profesorId, asignaturaId, fecha } = createForoDto;
+  
       const profesorExiste = await this.firestoreDb.collection('Profesores').doc(profesorId).get();
-      if(!profesorExiste.exists){
+      if (!profesorExiste.exists) {
         throw new Error('Profesor does not exist');
       }
-
+  
       const asignaturaSnapshot = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
-      if(!asignaturaSnapshot.exists){
+      if (!asignaturaSnapshot.exists) {
         throw new Error('Asignatura does not exist');
       }
-
-      const profesroData = profesorExiste.data();
-      if(!profesroData || !profesroData.uid){
-        throw new Error('Profesor id not found');
-      }
-
+  
       const data = {
-        title : title,
-        description : description,
-        profesor: profesroData.uid,
-        asignatura : asignaturaSnapshot.data() as Asignatura,
-        fecha : fecha
-      } 
+        title: title,
+        description: description,
+        profesorId: profesorId, 
+        asignatura: asignaturaSnapshot.data() as Asignatura,
+        fecha: fecha,
+        comentarios: [] as ForoComentario[],
+      };
+      console.log('data:', data);
 
       const docRef = this.firestoreDb.collection('Foro').doc();
       await docRef.set(data);
       
+
       return {
         title: title,
         description: description,
-        profesor: profesroData.uid as string,
+        profesor: profesorId,
         asignatura: asignaturaSnapshot.data() as Asignatura,
         fecha: fecha,
         id: docRef.id,
         profesorId: profesorId,
         comentarios: [] as ForoComentario[],
       } as Foro;
-
-    }catch(error){
+  
+    } catch (error) {
       throw new Error('Error creating foro: ' + error.message);
     }
   }
