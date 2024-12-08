@@ -8,7 +8,7 @@ import { Foro } from './entities/foro.entity';
 export class ForoController {
   constructor(private readonly foroService: ForoService) {}
 
-  @Post()
+  @Post('createForo')
   async create(@Body() createForoDto: CreateForoDto) {
     return this.foroService.create(createForoDto);
   }
@@ -24,7 +24,7 @@ export class ForoController {
   }
 
 
-  @Get(':id')
+  @Get(':id/forosProfesor')
   async getForosProfesor(@Param('id') id: string): Promise<Foro[]> {
     return this.foroService.getForosProfesor(id);
   }

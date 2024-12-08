@@ -16,7 +16,7 @@ export class CreateForoDto {
 
     @IsString()
     @MinLength(1)
-    cursoId: string;
+    asignaturaId: string;
 
     @IsString()
     @MinLength(1)

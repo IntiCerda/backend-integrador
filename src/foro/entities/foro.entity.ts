@@ -16,21 +16,19 @@ export class Foro {
 
     @IsString()
     @MinLength(1)
-    profesor: string;
+    profesorId: string;
 
     @IsString()
     @MinLength(1)
-    curso: string;
+    asignatura: Asignatura;
 
     @IsString()
     @MinLength(1)
     fecha: string;
 
-    asignaturas : Asignatura[];
     comentarios: ForoComentario[];
     
     constructor() {
-        this.asignaturas = [];
         this.comentarios = [];
     }
 }
