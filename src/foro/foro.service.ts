@@ -19,8 +19,8 @@ export class ForoService {
         throw new Error('Profesor does not exist');
       }
 
-      const asignaturaExiste = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
-      if(!asignaturaExiste.exists){
+      const asignaturaSnapshot = await this.firestoreDb.collection('Asignaturas').doc(asignaturaId).get();
+      if(!asignaturaSnapshot.exists){
         throw new Error('Curso does not exist');
       }
 
@@ -28,7 +28,7 @@ export class ForoService {
         title : title,
         description : description,
         profesor: profesorExiste.data().id,
-        asignatura : asignaturaExiste.data(),
+        asignatura : asignaturaSnapshot.data() as Asignatura,
         fecha : fecha
       } 
 
@@ -38,13 +38,13 @@ export class ForoService {
       return {
         title: title,
         description: description,
-        profesor: profesorExiste.data().id,
-        asignatura: asignaturaExiste.data(),
+        profesor: profesorExiste.data().id as string,
+        asignatura: asignaturaSnapshot.data() as Asignatura,
         fecha: fecha,
         id: docRef.id,
         profesorId: profesorId,
-        comentarios: []
-      } as unknown as Foro;
+        comentarios: [] as ForoComentario[],
+      } as Foro;
 
     }catch(error){
       throw new Error('Error creating foro: ' + error.message);
