@@ -15,27 +15,35 @@ export class ForoComentarioService {
       const { comentario, foroId, userId, fecha } = createForoComentarioDto;
   
       const foroRef = this.firestoreDb.collection('Foro').doc(foroId);
-      const userRef = this.firestoreDb.collection('Apoderados').doc(userId);
-  
       const foroDoc = await foroRef.get();
       if (!foroDoc.exists) {
         throw new Error('Foro does not exist');
       }
+
+      const apoderadoRef = this.firestoreDb.collection('Apoderados').doc(userId);
+      const apoderadoDoc = await apoderadoRef.get();
   
-      const userDoc = await userRef.get();
-      if (!userDoc.exists) {
+      let nombreCompleto;
+      if (apoderadoDoc.exists) {
+        const data = apoderadoDoc.data();
+        nombreCompleto = `${data?.nombre || ''} ${data?.apellido || ''}`.trim(); 
+        
+      } else {
         const profesorRef = this.firestoreDb.collection('Profesores').doc(userId);
         const profesorDoc = await profesorRef.get();
   
-        if (!profesorDoc.exists) {
-          throw new Error('User does not exist ');
+        if (profesorDoc.exists) {
+          const data = profesorDoc.data();
+          nombreCompleto = `${data?.nombre || ''} ${data?.apellido || ''}`.trim(); 
+        } else {
+          throw new Error('User does not exist');
         }
       }
   
       const data = {
         comentario: comentario,
         foroId: foroId,
-        userId: userId,
+        nombre: nombreCompleto, 
         fecha: fecha,
       };
   
@@ -51,7 +59,7 @@ export class ForoComentarioService {
       return {
         comentario: comentario,
         foroId: foroId,
-        userId: userId,
+        nombre: nombreCompleto, 
         fecha: fecha,
         id: comentarioRef.id,
       } as ForoComentario;

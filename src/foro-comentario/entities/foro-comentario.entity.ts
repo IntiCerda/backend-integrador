@@ -12,7 +12,7 @@ export class ForoComentario {
 
     @IsString()
     @MinLength(1)
-    userId: string; //Quien va a comentar en el foro? Alumnos o Apoderados?
+    nombre: string; //Quien va a comentar en el foro? Alumnos o Apoderados?
 
     @IsString()
     @MinLength(1)
