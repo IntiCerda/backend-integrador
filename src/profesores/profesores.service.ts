@@ -11,17 +11,24 @@ export class ProfesoresService {
   private firestoreDb = admin.firestore();
   
   async create(createProfesoreDto: CreateProfesoreDto) {
-    try{
+    try {
       const { id, ...data } = createProfesoreDto;
+  
       const docRef = this.firestoreDb.collection('Profesores').doc(id);
-      await docRef.set(data);
-      return {
-        ...data,
-        id: id,
-      }as Profesore;
 
-    }catch(error){
-      throw new Error('Error creating profesor: ' + error.message);
+      const profesorData = {
+        ...data,
+        asignaturas: Asignatura || [], 
+      };
+
+      await docRef.set(profesorData);
+      return {
+        ...profesorData,
+        id: id,
+      } as Profesore;
+  
+    } catch (error) {
+      throw new Error('Error creando profesor: ' + error.message);
     }
   }
 

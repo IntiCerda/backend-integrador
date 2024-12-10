@@ -55,7 +55,6 @@ export class AsignaturaService {
           id: profesorE.id, 
           nombre: profesorE.nombre, 
           apellido: profesorE.apellido,
-          asignaturas: profesorE.asignaturas,
         },
         curso: {
           id: cursoE.id,
