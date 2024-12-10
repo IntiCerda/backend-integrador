@@ -5,6 +5,7 @@ import admin from 'firebase-admin';
 import { Alumno } from './entities/alumno.entity';
 import { ApoderadosService } from 'src/apoderados/apoderados.service';
 import { Curso } from 'src/cursos/entities/curso.entity';
+import { Asistencia } from 'src/asistencia/entities/asistencia.entity';
 
 
 @Injectable()
@@ -155,7 +156,6 @@ async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
       const alumnosSnapshot = await this.firestoreDb.collection('Alumnos').get();
       const apoderadosMap = new Map<string, Set<string>>();
   
-      // Recolectar los IDs de alumnos por apoderado
       alumnosSnapshot.docs.forEach(doc => {
         const alumnoData = doc.data();
         const apoderadoId = alumnoData.apoderadoId;
@@ -168,7 +168,6 @@ async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
         }
       });
   
-      // Actualizar cada apoderado con los IDs de alumnos
       for (const [apoderadoId, alumnosIds] of apoderadosMap.entries()) {
         const apoderadoRef = this.firestoreDb.collection('Apoderados').doc(apoderadoId);
         const apoderadoDoc = await apoderadoRef.get();
@@ -177,10 +176,8 @@ async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
           const apoderadoData = apoderadoDoc.data() || {};
           const existingAlumnos = new Set(apoderadoData.alumnos || []);
   
-          // Combinar los alumnos existentes con los nuevos
           alumnosIds.forEach(alumnoId => existingAlumnos.add(alumnoId));
   
-          // Actualizar el apoderado
           await apoderadoRef.update({ alumnos: Array.from(existingAlumnos) });
           console.log(`Updated apoderado ${apoderadoId} with alumnos:`, Array.from(existingAlumnos));
         } else {
@@ -192,5 +189,31 @@ async create(createAlumnoDto: CreateAlumnoDto): Promise<Alumno> {
     }
   }
 
+  async getAsistenciaDeAlumno(alumnoId: string):Promise<{ nombre: string; fecha: string; asistencia: boolean; }[]> {
+    try {
+      const alumnoDoc = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
+      if (!alumnoDoc.exists) {
+        throw new NotFoundException('Alumno no encontrado.');
+      }
+  
+      const data = alumnoDoc.data();
+      const asistencias = data.asistencia || []; 
+  
+      const asistenciaPromises = asistencias.map(async (asistencia: Asistencia) => {
+        const asignaturaDoc = await this.firestoreDb.collection('Asignaturas').doc(asistencia.asignaturaId).get();
+        const asignaturaData = asignaturaDoc.data();
+  
+        return {
+          nombreAsignatura: asignaturaData?.nombre || 'Desconocida', 
+          fecha: asistencia.fecha,
+          asistencia: asistencia.asistencia,
+        };
+      });
+      const resultados = await Promise.all(asistenciaPromises);  
+      return resultados;
+    } catch (error) { 
+      throw new Error('Error obteniendo la asistencia: ' + error.message);
+    }
+  }
 
 }

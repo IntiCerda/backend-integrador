@@ -40,9 +40,15 @@ export class AlumnosController {
       await this.alumnosService.associateAlumnosWithApoderados();
       return 'Alumnos asociados con apoderados correctamente.';
     } catch (error) {
-      console.error(error);
       throw new Error('Error al asociar alumnos con apoderados.');
     }
   }
+
+  @Get('asistencia/:id')
+  async getAsistenciaDeAlumno(@Param('id') alumnoId: string) :Promise<{ nombre: string; fecha: string; asistencia: boolean; }[]> {
+  return this.alumnosService.getAsistenciaDeAlumno(alumnoId);
+  }
+
+  //nombre asignatura, fecha,asistencia (boolean)
 
 }
