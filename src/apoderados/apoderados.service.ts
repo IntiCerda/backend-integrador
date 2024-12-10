@@ -193,22 +193,23 @@ export class ApoderadosService {
     }
   }
 
-  async getAlumnosToApoderado(apoderadoId: string): Promise<Alumno[] | null> {
+  async getAlumnosToApoderado(apoderadoId: string): Promise<{ id: string; nombre: string; apellido: string }[] | null> {
     try {
       const alumnosRef = this.firestoreDb.collection('Alumnos').where('apoderadoId', '==', apoderadoId);
       const snapshot = await alumnosRef.get();
       if (snapshot.empty) {
         return null;
       }
-      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Alumno[];
+      return snapshot.docs.map(doc => ({
+        id: doc.id,
+        nombre: doc.data().nombre,
+        apellido: doc.data().apellido,
+      })) as { id: string; nombre: string; apellido: string }[];
     } catch (error) {
       console.error('Error fetching alumnos for apoderado:', error);
       return null; 
     }
   }
-  
-
-  
-  
+    
 
 }
