@@ -17,9 +17,9 @@ export class NotasController {
   async getNotasTodosAlumnos(): Promise<{ alumnoId: string; nombre: string; notas: Nota[] }[]> {
     return this.notasService.getNotasTodosAlumnos();
   }
-
+  
   @Get(':id')
-  getNotasDeUnAlumno(@Param('id') id: string): Promise<{ alumnoId: string; nombre: string; notas: Nota[] }> {
+  getNotasDeUnAlumno(@Param('id') id: string): Promise<{ asignatura: string; calificacion: number }[]> {
     return this.notasService.getNotasDeUnAlumno(id);
   }
 
