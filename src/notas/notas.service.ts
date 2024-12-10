@@ -113,7 +113,6 @@ export class NotasService {
       const notasTransformadas = await Promise.all(notas.map(async (nota) => {
         const asignaturaDoc = await this.firestoreDb.collection('Asignaturas').doc(nota.asignaturaId).get();
         const asignaturaData = asignaturaDoc.data();
-        console.log(asignaturaData);
         return {
           asignatura: asignaturaData?.nombre || 'Desconocida',
           calificacion: nota.calificacion,
