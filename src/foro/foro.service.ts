@@ -32,7 +32,6 @@ export class ForoService {
         fecha: fecha,
         comentarios: [] as ForoComentario[],
       };
-      console.log('data:', data);
 
       const docRef = this.firestoreDb.collection('Foro').doc();
       await docRef.set(data);

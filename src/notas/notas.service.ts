@@ -100,7 +100,7 @@ export class NotasService {
     }
   }
 
-  async getNotasDeUnAlumno(alumnoId: string): Promise<{ alumnoId: string; nombre: string; notas: Nota[] }> {
+  async getNotasDeUnAlumno(alumnoId: string): Promise<{ asignatura: string; calificacion: number }[]> {
     try {
       const alumnoDoc = await this.firestoreDb.collection('Alumnos').doc(alumnoId).get();
       if (!alumnoDoc.exists) {
@@ -108,15 +108,19 @@ export class NotasService {
       }
   
       const alumnoData = alumnoDoc.data();
-      const nombreCompleto = `${alumnoData?.nombre} ${alumnoData?.apellido}`;
-  
       const notas: Nota[] = alumnoData.notas || [];
   
-      return {
-        alumnoId: alumnoId,
-        nombre: nombreCompleto,
-        notas: notas,
-      };
+      const notasTransformadas = await Promise.all(notas.map(async (nota) => {
+        const asignaturaDoc = await this.firestoreDb.collection('Asignaturas').doc(nota.asignaturaId).get();
+        const asignaturaData = asignaturaDoc.data();
+        console.log(asignaturaData);
+        return {
+          asignatura: asignaturaData?.nombre || 'Desconocida',
+          calificacion: nota.calificacion,
+        };
+      }));
+  
+      return notasTransformadas;
   
     } catch (error) {
       throw new Error('Error obteniendo las notas del alumno: ' + error.message);
