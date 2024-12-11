@@ -31,7 +31,7 @@ export class ForoController {
 
   @Get('alumno/:id')
   async getForosDeAlumno(@Param('id') id: string): Promise<Foro[]> {
-    return this.foroService.getForosCurso(id);
+    return this.foroService.getForosAlumno(id);
   }
 
   @Patch(':id')

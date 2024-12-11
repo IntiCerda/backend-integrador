@@ -208,9 +208,19 @@ export class ForoService {
     }
   }
 
-  async getForosCurso(id: string): Promise<Foro[]> {
+  async getForosAlumno(id: string): Promise<Foro[]> {
     try {
-      const cursoRef = this.firestoreDb.collection('Cursos').doc(id);
+      const alumnoRef = this.firestoreDb.collection('Alumnos').doc(id);
+      const alumnoDoc = await alumnoRef.get();
+
+      if (!alumnoDoc.exists) {
+        throw new Error('Alumno does not exist');
+      }
+
+      const alumnoData = alumnoDoc.data();
+      const cursoAlumno = alumnoData?.curso || null;
+
+      const cursoRef = this.firestoreDb.collection('Cursos').doc(cursoAlumno);
       const cursoDoc = await cursoRef.get();
   
       if (!cursoDoc.exists) {
@@ -219,9 +229,14 @@ export class ForoService {
   
       const cursoData = cursoDoc.data();
       const cursoId = cursoData?.id || cursoDoc.id; 
-  
-      const forosRef = this.firestoreDb.collection('Foro').where('curso', '==', cursoId);
-      const forosSnapshot = await forosRef.get();
+      
+    const forosRef = this.firestoreDb.collection('Foro').where('asignatura.curso.id', '==', cursoId);
+    const forosSnapshot = await forosRef.get();
+
+    if (forosSnapshot.empty) {
+      console.warn(`No foros found for curso with ID ${cursoId}`);
+      return [];
+    }
   
       const foros: Foro[] = forosSnapshot.docs.map(doc => {
         const data = doc.data();
@@ -235,8 +250,7 @@ export class ForoService {
       return foros;
   
     } catch (error) {
-      console.error('Error getting foros curso:', error.message);
-      return []; 
+      throw new Error(`Failed to get foros for alumno with ID ${id}: ${error.message}`);
     }
   }
 
