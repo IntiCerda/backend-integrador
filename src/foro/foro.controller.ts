@@ -29,7 +29,7 @@ export class ForoController {
     return this.foroService.getForosProfesor(id);
   }
 
-  @Get(':id')
+  @Get('alumno/:id')
   async getForosDeAlumno(@Param('id') id: string): Promise<Foro[]> {
     return this.foroService.getForosCurso(id);
   }
