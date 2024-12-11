@@ -193,23 +193,37 @@ export class ApoderadosService {
     }
   }
 
-  async getAlumnosToApoderado(apoderadoId: string): Promise<{ id: string; nombre: string; apellido: string }[] | null> {
+  async getAlumnosToApoderado(apoderadoId: string): Promise<{ id: string; nombre: string; apellido: string; rut:string; curso:string }[] | null> {
     try {
       const alumnosRef = this.firestoreDb.collection('Alumnos').where('apoderadoId', '==', apoderadoId);
       const snapshot = await alumnosRef.get();
       if (snapshot.empty) {
         return null;
       }
+
+      const cursoId = snapshot.docs.map(doc => doc.data().curso)[0];
+      const cursoRef = this.firestoreDb.collection('Cursos').doc(cursoId);
+      const cursoDoc = await cursoRef.get();
+      if (!cursoDoc.exists) {
+        console.log('No such curso!');
+        return null;
+      }
+      
       return snapshot.docs.map(doc => ({
         id: doc.id,
         nombre: doc.data().nombre,
         apellido: doc.data().apellido,
-      })) as { id: string; nombre: string; apellido: string }[];
+        rut: doc.data().rut,
+        curso: cursoDoc.data().nombre,
+
+      })) as { id: string; nombre: string; apellido: string; rut: string ; curso: string }[];
     } catch (error) {
       console.error('Error fetching alumnos for apoderado:', error);
       return null; 
     }
   }
+    
+
     
 
 }
